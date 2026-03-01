@@ -41,16 +41,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const { power, zeroToHundred } = getCarPowerSpecs(car);
 
   return (
-    /* ZMENA: Návrat k hlbokej Navy Blue (#020617) a odstránenie ambientných žiari */
     <main className="relative min-h-screen overflow-x-hidden bg-[#020617] selection:bg-sky-500/30">
-      
-      {/* POZNÁMKA: Tu boli "žiary" (ambientné gradienty). 
-         Boli kompletne odstránené, aby vynikol čistý dymový Glassmorphism.
-      */}
 
       <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-8 px-4 pb-16 pt-8 sm:px-6 lg:gap-12 lg:px-8 lg:pb-32 lg:pt-12">
         
-        {/* Horná navigácia - Čistý Glass štýl bez farebného nádychu žiari */}
         <div className="flex items-center justify-between gap-4">
           <Link
             href="/"
@@ -64,7 +58,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           
         </div>
 
-        {/* Samotný obsah gridu */}
         <CarDetailGrid car={car} power={power} zeroToHundred={zeroToHundred} />
       </div>
     </main>

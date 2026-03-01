@@ -1,7 +1,9 @@
 "use client";
 
 import { Calendar } from "@/components/ui/calendar";
-import { sk } from "react-day-picker/locale";
+// Importujeme lokalizácie pre kalendár
+import { sk, enGB, bs } from "date-fns/locale";
+import { useLang } from "@/context/LanguageContext";
 
 type CarDateRangePickerProps = {
   from: string;
@@ -30,6 +32,18 @@ export function CarDateRangePicker({
   onChangeTo,
   bookedDates
 }: CarDateRangePickerProps) {
+  const { lang } = useLang(); // Získame aktuálny jazyk
+
+  // Vyberieme správnu lokalizáciu pre date-fns (kalendár)
+  const calendarLocale = lang === 'en' ? enGB : lang === 'bs' ? bs : sk;
+  
+  // Preklad labelu
+  const labelText = {
+    sk: "Vyberte termín prenájmu",
+    en: "Select rental period",
+    bs: "Odaberite period najma"
+  }[lang as 'sk' | 'en' | 'bs'] || "Vyberte termín prenájmu";
+
   const disabledDates = bookedDates.map(parseLocalDate);
   const selected = {
     from: from ? parseLocalDate(from) : undefined,
@@ -39,7 +53,7 @@ export function CarDateRangePicker({
   return (
     <div className="space-y-2">
       <label className="text-xs font-medium uppercase tracking-wide text-slate-400">
-        Vyberte termín prenájmu
+        {labelText}
       </label>
       <div className="elite-calendar-wrapper rounded-xl border border-slate-700/60 bg-slate-900/80 p-4">
         <Calendar
@@ -56,7 +70,7 @@ export function CarDateRangePicker({
           }}
           disabled={disabledDates}
           excludeDisabled
-          locale={sk}
+          locale={calendarLocale} // TOTO prepína jazyk dní a mesiacov
           showOutsideDays={false}
           className="w-full"
           classNames={{
