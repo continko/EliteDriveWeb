@@ -4,6 +4,11 @@ import { Bluetooth, Car, Lightbulb, Settings2, Snowflake, Speaker, Camera, Wind,
 import type { Car as CarType } from "@/lib/cars";
 import { useLang } from "@/context/LanguageContext";
 
+// 1. Definícia Props, aby TypeScript vedel, čo prichádza do komponentu
+type CarEquipmentPillsProps = {
+  car: CarType;
+};
+
 const EQUIPMENT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   default: Car,
   brzdy: Disc,
@@ -11,27 +16,29 @@ const EQUIPMENT_ICONS: Record<string, React.ComponentType<{ className?: string }
   harman: Music,
   odvietrané: Snowflake,
   kamera: Camera,
-  // ... tvoje ostatné ikony
+  bluetooth: Bluetooth,
+  nastavenia: Settings2,
+  audio: Speaker,
+  vzduch: Wind,
 };
 
 export function CarEquipmentPills({ car }: CarEquipmentPillsProps) {
-  const { t, lang } = useLang();
+  // Pridaný defaultný prázdny objekt pre t, aby sa predišlo undefined chybám
+  const { t = {}, lang } = useLang();
   
   if (!car.equipment?.length) return null;
 
-  // Funkcia, ktorá nájde preklad podľa kľúčového slova
   const getTranslatedItem = (item: string) => {
     const lowerItem = item.toLowerCase();
     
-    // Ak sme v slovenčine, vrátime pôvodný text
     if (lang === 'sk') return item;
 
-    // Hľadáme, či sa nejaký kľúč z translations nachádza v našom texte
-    // Napr. ak t obsahuje "brzdy", a item je "M Karbón-keramické brzdy", vráti preklad pre "brzdy"
+    // Bezpečný prístup k prekladom
     const translationKeys = Object.keys(t);
-    const foundKey = translationKeys.find(key => lowerItem.includes(key));
+    const foundKey = translationKeys.find(key => lowerItem.includes(key.toLowerCase()));
 
-    return foundKey ? (t as any)[foundKey] : item;
+    // Ak nájdeme kľúč, vrátime preklad, inak pôvodný text
+    return foundKey ? (t as Record<string, string>)[foundKey] : item;
   };
 
   return (
@@ -46,6 +53,7 @@ export function CarEquipmentPills({ car }: CarEquipmentPillsProps) {
       <div className="flex flex-wrap gap-3">
         {car.equipment.map((item) => {
           const lower = item.toLowerCase();
+          // Nájdenie správnej ikony podľa kľúčového slova v texte
           const iconKey = Object.keys(EQUIPMENT_ICONS).find(k => lower.includes(k)) || "default";
           const Icon = EQUIPMENT_ICONS[iconKey];
           
