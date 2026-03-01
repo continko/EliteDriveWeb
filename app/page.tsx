@@ -137,7 +137,7 @@ export default function HomePage() {
           <h2 className="text-5xl font-black text-white mb-6 tracking-tighter sm:text-7xl">Máte otázky?</h2>
           <p className="text-slate-400 mb-10 max-w-xl mx-auto italic">Sme tu pre vás 24/7. Zavolajte nám alebo pošlite nezáväzný dopyt.</p>
           <a 
-            href="tel:+421910666949" 
+            href="tel:+4219XXXXXXXX" 
             className="inline-flex items-center gap-3 rounded-2xl bg-sky-500 px-12 py-6 text-sm font-black uppercase tracking-widest text-slate-950 hover:bg-sky-400 transition-all shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:scale-105"
           >
             Kontaktovať podporu
