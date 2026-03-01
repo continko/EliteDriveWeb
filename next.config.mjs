@@ -27,6 +27,12 @@ const nextConfig = {
         hostname: "www.mad4wheels.com"
       },
       {
+        protocol: 'https',
+        hostname: 'images.pistonheads.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
         protocol: "https",
         hostname: "s1.cdn.autoevolution.com"
       },

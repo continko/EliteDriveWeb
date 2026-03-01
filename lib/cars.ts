@@ -268,7 +268,7 @@ export const cars: Car[] = [
     name: "C63 AMG",
     year: 2023,
     color: "Matte Black",
-    imageUrl: "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: "https://images.pistonheads.com/nimg/46601/blobid0.jpg",
     transmission: "automat",
     fuel: "Benzín",
     drive: "4x4",
