@@ -11,11 +11,15 @@ import { useLang } from "@/context/LanguageContext";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const LOCATIONS = [
-  { id: "tn", name: "Trenčín", price: 0 },
-  { id: "za", name: "Žilina", price: 48 },
+  { id: "za", name: "Žilina", price: 0 },
+  { id: "dk", name: "Dolný Kubín", price: 0 },
+  { id: "tn", name: "Trenčín", price: 48 },
   { id: "nr", name: "Nitra", price: 80 },
+  { id: "bb", name: "Banská Bystrica",  },
   { id: "ba", name: "Bratislava", price: 104 },
+  { id: "vie", name: "Schwechat - Letisko", price: 150 },
   { id: "bud", name: "Budapešť", price: 183 },
+  { id: "ke", name: "Košice", price: 260 },
 ];
 
 type CarDetailReservationFormProps = {
