@@ -8,6 +8,12 @@ type CarPricingCalculatorProps = {
   pricing: PricingTier[];
   from: string;
   to: string;
+  // NOVÉ PROPS
+  pickupPrice?: number;
+  returnPrice?: number;
+  hasSecondDriver?: boolean;
+  pickupTime?: string;
+  returnTime?: string;
 };
 
 function findTier(pricing: PricingTier[], days: number): PricingTier | undefined {
@@ -18,37 +24,64 @@ function findTier(pricing: PricingTier[], days: number): PricingTier | undefined
   });
 }
 
-function calculateRentalDays(from: string, to: string): number | null {
+// UPRAVENÁ FUNKCIA: Teraz počíta dni presne podľa dátumu AJ ČASU
+function calculateRentalDays(from: string, to: string, pickupTime: string, returnTime: string): number | null {
   if (!from || !to) return null;
-  const fromDate = new Date(from);
-  const toDate = new Date(to);
-  if (Number.isNaN(fromDate.getTime()) || Number.isNaN(toDate.getTime())) return null;
+  
+  // Vytvoríme ISO formát stringu pre korektný parse
+  const start = new Date(`${from}T${pickupTime || "10:00"}`);
+  const end = new Date(`${to}T${returnTime || "10:00"}`);
 
-  const diffMs = toDate.getTime() - fromDate.getTime();
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+
+  const diffMs = end.getTime() - start.getTime();
   if (diffMs < 0) return null;
 
   const msPerDay = 1000 * 60 * 60 * 24;
+  
+  // Math.ceil zabezpečí, že ak je prenájom napr. 24 hodín a 1 minúta, započíta sa 2. deň
   const diffDays = Math.ceil(diffMs / msPerDay);
+  
   return Math.max(1, diffDays);
 }
 
-export function CarPricingCalculator({ pricing, from, to }: CarPricingCalculatorProps) {
+export function CarPricingCalculator({ 
+  pricing, from, to, 
+  pickupPrice = 0, 
+  returnPrice = 0, 
+  hasSecondDriver = false,
+  pickupTime = "10:00",
+  returnTime = "10:00"
+}: CarPricingCalculatorProps) {
   const { lang } = useLang();
-  const rentalDays = useMemo(() => calculateRentalDays(from, to), [from, to]);
-  const tier = useMemo(() => (rentalDays != null ? findTier(pricing, rentalDays) : undefined), [pricing, rentalDays]);
 
+  // 1. Výpočet dní (zohľadňuje už aj časy)
+  const rentalDays = useMemo(() => 
+    calculateRentalDays(from, to, pickupTime, returnTime), 
+    [from, to, pickupTime, returnTime]
+  );
+
+  // 2. Nájdenie správnej cenovej hladiny
+  const tier = useMemo(() => 
+    (rentalDays != null ? findTier(pricing, rentalDays) : undefined), 
+    [pricing, rentalDays]
+  );
+
+  // 3. FINÁLNY VÝPOČET CELKOVEJ CENY
   const total = useMemo(() => {
     if (rentalDays == null || !tier) return null;
-    return rentalDays * tier.pricePerDay;
-  }, [rentalDays, tier]);
+    
+    const basePrice = rentalDays * tier.pricePerDay;
+    const extras = pickupPrice + returnPrice + (hasSecondDriver ? 20 : 0);
+    
+    return basePrice + extras;
+  }, [rentalDays, tier, pickupPrice, returnPrice, hasSecondDriver]);
 
   const uiTexts = {
     sk: {
       autoCalc: "Automatický výpočet",
       title: "Kalkulačka ceny",
-      desc: "Cena sa prepočíta podľa zvoleného termínu (bez doplnkových služieb).",
-      selectDates: "Vyberte oba dátumy v kalendári vyššie pre okamžitý výpočet ceny.",
-      invalidRange: "Neplatný rozsah: Dátum \"DO\" musí byť neskôr ako \"OD\".",
+      desc: "Cena zahŕňa prenájom, zvolené lokality a doplnkové služby.",
       duration: "Doba",
       rate: "Sadzba",
       total: "Celkom",
@@ -57,14 +90,14 @@ export function CarPricingCalculator({ pricing, from, to }: CarPricingCalculator
       kmDay: "km/deň",
       day1: "deň",
       day24: "dni",
-      day5plus: "dní"
+      day5plus: "dní",
+      selectDates: "Vyberte termín pre výpočet ceny",
+      invalidRange: "Neplatný rozsah dátumov"
     },
     en: {
       autoCalc: "Automatic calculation",
       title: "Price Calculator",
-      desc: "Price is calculated based on selected dates (excluding extra services).",
-      selectDates: "Select both dates in the calendar above for instant price calculation.",
-      invalidRange: "Invalid range: \"TO\" date must be later than \"FROM\" date.",
+      desc: "Price includes rental, locations, and extra services.",
       duration: "Duration",
       rate: "Rate",
       total: "Total",
@@ -73,31 +106,14 @@ export function CarPricingCalculator({ pricing, from, to }: CarPricingCalculator
       kmDay: "km/day",
       day1: "day",
       day24: "days",
-      day5plus: "days"
-    },
-    bs: {
-      autoCalc: "Automatski proračun",
-      title: "Kalkulator cijene",
-      desc: "Cijena se obračunava prema odabranom terminu (bez dodatnih usluga).",
-      selectDates: "Odaberite oba datuma u kalendaru iznad za trenutni obračun cijene.",
-      invalidRange: "Nevažeći raspon: Datum \"DO\" mora biti kasniji od datuma \"OD\".",
-      duration: "Trajanje",
-      rate: "Stopa",
-      total: "Ukupno",
-      vatIncl: "Sa PDV-om",
-      limit: "Limit",
-      kmDay: "km/dan",
-      day1: "dan",
-      day24: "dana",
-      day5plus: "dana"
+      day5plus: "days",
+      selectDates: "Select dates for price calculation",
+      invalidRange: "Invalid date range"
     }
-  }[lang as 'sk' | 'en' | 'bs'] || {};
+  }[lang as 'sk' | 'en'] || {};
 
-  // Funkcia na skloňovanie slova "deň"
   const getDayLabel = (days: number) => {
     if (lang === 'en') return days === 1 ? uiTexts.day1 : uiTexts.day5plus;
-    if (lang === 'bs') return days === 1 ? uiTexts.day1 : uiTexts.day5plus;
-    // Slovenčina
     if (days === 1) return uiTexts.day1;
     if (days >= 2 && days <= 4) return uiTexts.day24;
     return uiTexts.day5plus;
@@ -106,50 +122,44 @@ export function CarPricingCalculator({ pricing, from, to }: CarPricingCalculator
   if (pricing.length === 0) return null;
 
   const hasBothDates = Boolean(from && to);
-  const isInvalidRange = hasBothDates && rentalDays == null;
   const showResult = hasBothDates && rentalDays != null && tier && total != null;
 
   return (
     <section className="relative overflow-hidden space-y-6 rounded-[3rem] border border-white/10 bg-slate-900/60 p-6 backdrop-blur-xl shadow-2xl sm:p-8">
-      <div className="absolute inset-0 rounded-[3rem] ring-1 ring-inset ring-white/5 pointer-events-none" />
-
       <header className="space-y-1">
         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-sky-400">{uiTexts.autoCalc}</p>
         <h2 className="text-xl font-black text-white sm:text-2xl tracking-tight">{uiTexts.title}</h2>
         <p className="text-[11px] leading-relaxed text-slate-400">{uiTexts.desc}</p>
       </header>
 
-      {!hasBothDates && (
-        <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-4">
-          <p className="text-[11px] text-slate-400">{uiTexts.selectDates}</p>
+      {!showResult ? (
+        <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-4 text-center">
+          <p className="text-[11px] text-slate-500 italic">
+            {!hasBothDates ? uiTexts.selectDates : uiTexts.invalidRange}
+          </p>
         </div>
-      )}
-
-      {isInvalidRange && (
-        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4">
-          <p className="text-[11px] font-bold text-amber-400">{uiTexts.invalidRange}</p>
-        </div>
-      )}
-
-      {showResult && (
+      ) : (
         <div className="grid gap-6 rounded-[2rem] border border-white/10 bg-slate-950/60 p-6 shadow-[0_0_30px_-10px_rgba(14,165,233,0.15)] sm:grid-cols-3">
+          {/* TRVANIE */}
           <div className="space-y-1">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{uiTexts.duration}</p>
             <p className="text-lg font-black text-white">{rentalDays} {getDayLabel(rentalDays)}</p>
-            <p className="text-[10px] font-bold text-sky-400/80">{tier.label}</p>
+            <p className="text-[10px] font-bold text-sky-400/80 uppercase">{tier.label}</p>
           </div>
           
+          {/* SADZBA */}
           <div className="space-y-1">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{uiTexts.rate}</p>
-            <p className="text-lg font-black text-white">{tier.pricePerDay.toLocaleString(lang === 'sk' ? "sk-SK" : "en-US")} €</p>
-            <p className="text-[10px] font-bold text-slate-400">
-              {uiTexts.limit} {tier.dailyKmLimit.toLocaleString(lang === 'sk' ? "sk-SK" : "en-US")} {uiTexts.kmDay}
+            <p className="text-lg font-black text-white">{tier.pricePerDay} €</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase">
+              {uiTexts.limit} {tier.dailyKmLimit} {uiTexts.kmDay}
             </p>
           </div>
 
+          {/* CELKOVÁ CENA */}
           <div className="space-y-1 border-t border-white/10 pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
             <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">{uiTexts.total}</p>
-            <p className="text-2xl font-black text-amber-400 leading-none">
+            <p className="text-3xl font-black text-amber-400 leading-none">
               {total.toLocaleString(lang === 'sk' ? "sk-SK" : "en-US")} €
             </p>
             <p className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter mt-1">{uiTexts.vatIncl}</p>

@@ -4,11 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import { CarFront, Zap } from "lucide-react";
 import type { Car } from "@/lib/cars";
-import { useLang } from "@/context/LanguageContext"; // Import kontextu
+import { useLang } from "@/context/LanguageContext";
 import { CarSpecsTiles } from "@/components/CarSpecsTiles";
 import { CarPricingTableCard } from "@/components/CarPricingTableCard";
 import { CarIncludedSection } from "@/components/CarIncludedSection";
-import { CarEquipmentPills } from "@/components/CarEquipmentPills";
 import { CarPricingCalculator } from "@/components/CarPricingCalculator";
 import { CarDetailReservationForm } from "@/components/CarDetailReservationForm";
 import { CarRentalConditionsCard } from "@/components/CarRentalConditionsCard";
@@ -20,13 +19,20 @@ type CarDetailGridProps = {
 };
 
 export function CarDetailGrid({ car, power, zeroToHundred }: CarDetailGridProps) {
+  const { lang } = useLang();
+  
+  // ZÁKLADNÉ STAVY PRE TERMÍN
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const { t, lang } = useLang(); // Vytiahneme preklady a aktuálny jazyk
+  const [pickupTime, setPickupTime] = useState("10:00");
+  const [returnTime, setReturnTime] = useState("10:00");
 
-  // Pomocný preklad pre slovo "Model"
-  const modelLabel = lang === "sk" ? "Model" : lang === "en" ? "Model" : "Model";
-  const equipmentLabel = lang === "sk" ? "Prémiová výbava" : lang === "en" ? "Premium Equipment" : "Premium oprema";
+  // STAVY PRE EXTRA SLUŽBY (Kalkulačka ich potrebuje)
+  const [pickupPrice, setPickupPrice] = useState(0);
+  const [returnPrice, setReturnPrice] = useState(0);
+  const [hasSecondDriver, setHasSecondDriver] = useState(false);
+
+  const modelLabel = lang === "sk" ? "Model" : "Model";
 
   return (
     <section className="relative grid gap-12 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-start pb-24">
@@ -42,10 +48,8 @@ export function CarDetailGrid({ car, power, zeroToHundred }: CarDetailGridProps)
               priority
               className="object-cover transition-transform duration-1000 group-hover:scale-105"
             />
-            
             <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent opacity-90" />
             
-            {/* Plávajúce tagy */}
             <div className="absolute left-8 top-8 flex gap-4">
               <div className="inline-flex items-center gap-2 rounded-2xl bg-white/5 border border-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur-xl">
                 <CarFront className="h-4 w-4 text-sky-500" />
@@ -57,7 +61,6 @@ export function CarDetailGrid({ car, power, zeroToHundred }: CarDetailGridProps)
               </div>
             </div>
 
-            {/* Titulok v obrázku */}
             <div className="absolute bottom-12 left-8 right-8 sm:left-14">
               <h3 className="text-2xl font-black text-white sm:text-5xl tracking-tighter">
                 {car.name}
@@ -66,12 +69,10 @@ export function CarDetailGrid({ car, power, zeroToHundred }: CarDetailGridProps)
           </div>
         </div>
 
-        {/* ĽAVÝ STĹPEC */}
         <div className="space-y-20">
           <CarPricingTableCard car={car} pricing={car.pricing} />
           <CarSpecsTiles car={car} power={power} zeroToHundred={zeroToHundred} />
           <CarIncludedSection />
-
         </div>
       </div>
 
@@ -85,11 +86,28 @@ export function CarDetailGrid({ car, power, zeroToHundred }: CarDetailGridProps)
               to={to}
               onChangeFrom={setFrom}
               onChangeTo={setTo}
+              // PREPOJENIE FUNKCIÍ Z FORMULÁRA
+              onPickupChange={setPickupPrice}
+              onReturnChange={setReturnPrice}
+              onSecondDriverChange={setHasSecondDriver}
+              onPickupTimeChange={setPickupTime}
+              onReturnTimeChange={setReturnTime}
             />
           </div>
         </div>
         
-        <CarPricingCalculator pricing={car.pricing} from={from} to={to} />
+        {/* PREPOJENIE DÁT DO KALKULAČKY */}
+        <CarPricingCalculator 
+          pricing={car.pricing} 
+          from={from} 
+          to={to}
+          pickupPrice={pickupPrice}
+          returnPrice={returnPrice}
+          hasSecondDriver={hasSecondDriver}
+          pickupTime={pickupTime}
+          returnTime={returnTime}
+        />
+
         <CarRentalConditionsCard car={car} />
       </div>
     </section>
