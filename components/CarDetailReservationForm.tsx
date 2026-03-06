@@ -7,6 +7,19 @@ import type { Car } from "@/lib/cars";
 import { supabase } from "@/lib/supabase";
 import { useLang } from "@/context/LanguageContext";
 
+import DatePicker, { registerLocale } from "react-datepicker";
+import { sk } from "date-fns/locale";
+import "react-datepicker/dist/react-datepicker.css";
+import { startOfDay, format } from "date-fns";
+
+import { CarPricingCalculator } from "./CarPricingCalculator";
+
+registerLocale("sk", sk);
+
+const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => {
+  return `${i.toString().padStart(2, '0')}:00`;
+});
+
 export const LOCATIONS = [
   { id: "za", name: "Žilina", price: 0 },
   { id: "dk", name: "Dolný Kubín", price: 0 },
@@ -30,12 +43,16 @@ type CarDetailReservationFormProps = {
   onSecondDriverChange?: (active: boolean) => void;
   onPickupTimeChange?: (time: string) => void;
   onReturnTimeChange?: (time: string) => void;
+  onTotalPriceChange?: (price: number | null) => void;
+  totalPrice: number | null;
 };
 
 export function CarDetailReservationForm({
   car, from, to, onChangeFrom, onChangeTo,
   onPickupChange, onReturnChange, onSecondDriverChange,
-  onPickupTimeChange, onReturnTimeChange
+  onPickupTimeChange, onReturnTimeChange,
+  onTotalPriceChange,
+  totalPrice 
 }: CarDetailReservationFormProps) {
   const { lang } = useLang();
   const [form, setForm] = useState({ name: "", phone: "", email: "", hasSecondDriver: false });
@@ -45,14 +62,38 @@ export function CarDetailReservationForm({
   const [returnTime, setReturnTime] = useState("10:00");
   const [openDropdown, setOpenDropdown] = useState<'pickup' | 'return' | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // PRIDANÉ: Lokálny stav na zachytenie ceny z kalkulačky
+  const [localPrice, setLocalPrice] = useState<number | null>(null);
+  
+  const [bookedIntervals, setBookedIntervals] = useState<{ start: Date; end: Date }[]>([]);
 
   useEffect(() => {
+    const fetchBookings = async () => {
+      const fullCarName = `${car.brand} ${car.name}`;
+      const { data } = await supabase
+        .from("bookings")
+        .select("start_date, end_date")
+        .eq("car_name", fullCarName)
+        .eq("status", "confirmed");
+
+      if (data) {
+        const intervals = data.map((b) => ({
+          start: startOfDay(new Date(b.start_date)),
+          end: startOfDay(new Date(b.end_date)),
+        }));
+        setBookedIntervals(intervals);
+      }
+    };
+
+    fetchBookings();
+    
     onPickupChange?.(pickupLoc.price);
     onReturnChange?.(returnLoc.price);
     onSecondDriverChange?.(form.hasSecondDriver);
     onPickupTimeChange?.(pickupTime);
     onReturnTimeChange?.(returnTime);
-  }, []);
+  }, [car, pickupLoc.price, returnLoc.price, form.hasSecondDriver, pickupTime, returnTime]);
 
   const uiTexts = {
     sk: {
@@ -63,7 +104,10 @@ export function CarDetailReservationForm({
       secondDriver: "Druhý vodič",
       secondDriverDesc: "Oprávnenie pre ďalšiu osobu",
       send: "Odoslať dopyt",
-      sending: "Odosielam..."
+      sending: "Odosielam...",
+      selectDate: "Vyberte termín prenájmu",
+      pickupTime: "Čas prevzatia",
+      returnTime: "Čas vrátenia"
     },
     en: {
       title: "Vehicle Reservation",
@@ -73,17 +117,30 @@ export function CarDetailReservationForm({
       secondDriver: "Second Driver",
       secondDriverDesc: "Authorization for another person",
       send: "Send Request",
-      sending: "Sending..."
+      sending: "Sending...",
+      selectDate: "Select Rental Dates",
+      pickupTime: "Pickup Time",
+      returnTime: "Return Time"
     }
   }[lang as 'sk' | 'en'] || {};
+
+  const handleDateChange = (dates: [Date | null, Date | null]) => {
+    const [start, end] = dates;
+    onChangeFrom(start ? format(start, "yyyy-MM-dd") : "");
+    onChangeTo(end ? format(end, "yyyy-MM-dd") : "");
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!from || !to) {
-      toast.error(lang === 'sk' ? "Vyberte prosím termín." : "Please select dates.");
+      toast.error(lang === 'sk' ? "Vyberte prosím termín v kalendári." : "Please select dates.");
       return;
     }
     setIsSubmitting(true);
+
+    // Použijeme localPrice (z kalkulačky) alebo totalPrice (z props)
+    const finalPrice = localPrice || totalPrice;
+
     try {
       const { error } = await supabase.from("bookings").insert({
         car_name: `${car.brand} ${car.name}`,
@@ -95,22 +152,43 @@ export function CarDetailReservationForm({
         pickup_location: pickupLoc.name,
         return_location: returnLoc.name,
         second_driver: form.hasSecondDriver,
+        total_price: finalPrice, // TERAZ UŽ NEBUDE NULL
         status: 'pending'
       });
 
       if (error) throw error;
 
-      const msg = `🏎️ *REZERVÁCIA: ${car.brand} ${car.name}*\n\n👤 ${form.name}\n📞 ${form.phone}\n📧 ${form.email}\n\n📍 *OD:* ${from} o ${pickupTime} (${pickupLoc.name})\n📍 *DO:* ${to} o ${returnTime} (${returnLoc.name})\n👥 *Vodič navyše:* ${form.hasSecondDriver ? "Áno" : "Nie"}`;
+      const msg = [
+        `🏎️ *REZERVÁCIA: ${car.brand} ${car.name}*`,
+        ``,
+        `👤 *Zákazník:* ${form.name}`,
+        `📞 *Telefón:* ${form.phone}`,
+        `📧 *Email:* ${form.email}`,
+        ``,
+        `📍 *OD:* ${from}, ${pickupTime} (${pickupLoc.name})`,
+        `📍 *DO:* ${to}, ${returnTime} (${returnLoc.name})`,
+        ``,
+        `💰 *CENA:* ${finalPrice ? `${finalPrice} €` : "Nezadaná"}`,
+        ``,
+        `*DOPLNKOVÉ SLUŽBY:*`,
+        `Vodič navyše: ${form.hasSecondDriver ? "Áno ✅" : "Nie ❌"}`
+      ].join('\n');
       
       await fetch(`https://api.telegram.org/bot8542236541:AAF-Aqux4lhxd-Sosb6bqEF71UH-v8GQjrU/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: '7979398003', text: msg, parse_mode: 'Markdown' })
+        body: JSON.stringify({ 
+          chat_id: '7979398003', 
+          text: msg, 
+          parse_mode: 'Markdown' 
+        })
       });
 
       toast.success(lang === 'sk' ? "Dopyt bol odoslaný!" : "Request sent!");
+      setForm(p => ({ ...p, name: "", phone: "", email: "" }));
+
     } catch (err) {
-      toast.error("Error.");
+      toast.error(lang === 'sk' ? "Chyba pri odosielaní." : "Error sending request.");
     } finally {
       setIsSubmitting(false);
     }
@@ -169,11 +247,12 @@ export function CarDetailReservationForm({
 
   return (
     <div className="relative space-y-8 rounded-[3rem] border border-white/10 bg-slate-900/60 p-6 backdrop-blur-xl shadow-2xl sm:p-8">
-      <header>
+      <header className="flex justify-between items-center">
         <h2 className="text-2xl font-black text-white tracking-tight">{uiTexts.title}</h2>
       </header>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* SEKCIA: OSOBNÉ ÚDAJE */}
         <div className="space-y-4">
           <div>
             <label className={labelClass}><User size={12} className="text-sky-500" /> Meno a priezvisko</label>
@@ -194,18 +273,65 @@ export function CarDetailReservationForm({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 rounded-3xl border border-white/5 bg-slate-950/20 p-4 sm:grid-cols-2">
-          <div className="space-y-3">
-            <label className={labelClass}><Calendar size={12} className="text-sky-500" /> Vyzdvihnutie</label>
-            <input className={`${inputClass} !py-2`} type="date" value={from} onChange={e => onChangeFrom(e.target.value)} required />
-            <input className={`${inputClass} !py-2 text-sky-400 font-bold`} type="time" value={pickupTime} 
-              onChange={e => { setPickupTime(e.target.value); onPickupTimeChange?.(e.target.value); }} />
+        {/* SEKCOIA: KALENDÁR */}
+        <div className="space-y-4 rounded-3xl border border-white/5 bg-slate-950/20 p-6">
+          <label className={labelClass}><Calendar size={12} className="text-sky-500" /> {uiTexts.selectDate}</label>
+          
+          <div className="elite-datepicker-wrapper">
+            <DatePicker
+              selected={from ? new Date(from) : null}
+              onChange={handleDateChange}
+              startDate={from ? new Date(from) : null}
+              endDate={to ? new Date(to) : null}
+              selectsRange
+              minDate={new Date()}
+              excludeDateIntervals={bookedIntervals}
+              locale="sk"
+              inline
+              disabledKeyboardNavigation
+              focusSelectedMonth={false}
+              calendarClassName="elite-calendar"
+              dayClassName={(date) => {
+                const isBooked = bookedIntervals.some(interval => 
+                  date >= interval.start && date <= interval.end
+                );
+                return isBooked ? "booked-day" : "";
+              }}
+            />
           </div>
-          <div className="space-y-3">
-            <label className={labelClass}><Calendar size={12} className="text-amber-500" /> Vrátenie</label>
-            <input className={`${inputClass} !py-2`} type="date" value={to} onChange={e => onChangeTo(e.target.value)} required />
-            <input className={`${inputClass} !py-2 text-amber-500 font-bold`} type="time" value={returnTime} 
-              onChange={e => { setReturnTime(e.target.value); onReturnTimeChange?.(e.target.value); }} />
+
+          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-slate-500 flex items-center gap-1">
+                <Clock size={12} className="text-sky-500" /> {uiTexts.pickupTime}
+              </label>
+              <div className="relative">
+                <select 
+                  value={pickupTime}
+                  onChange={e => { setPickupTime(e.target.value); onPickupTimeChange?.(e.target.value); }}
+                  className="w-full bg-slate-950/60 border border-white/10 rounded-xl px-4 py-2 text-sm text-white appearance-none outline-none focus:border-sky-500/50 cursor-pointer"
+                >
+                  {TIME_OPTIONS.map(t => <option key={t} value={t} className="bg-slate-900">{t}</option>)}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-500 pointer-events-none" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-slate-500 flex items-center gap-1">
+                <Clock size={12} className="text-amber-500" /> {uiTexts.returnTime}
+              </label>
+              <div className="relative">
+                <select 
+                  value={returnTime}
+                  onChange={e => { setReturnTime(e.target.value); onReturnTimeChange?.(e.target.value); }}
+                  className="w-full bg-slate-950/60 border border-white/10 rounded-xl px-4 py-2 text-sm text-white appearance-none outline-none focus:border-amber-500/50 cursor-pointer"
+                >
+                  {TIME_OPTIONS.map(t => <option key={t} value={t} className="bg-slate-900">{t}</option>)}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-500 pointer-events-none" />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -214,12 +340,12 @@ export function CarDetailReservationForm({
           <LocationSelect label={uiTexts.return} current={returnLoc} type="return" />
         </div>
 
-        {/* DRUHÝ VODIČ - OPRAVENÉ PREPOJENIE */}
+        {/* DOPLNKOVÉ SLUŽBY */}
         <div 
           onClick={() => { 
             const newValue = !form.hasSecondDriver;
             setForm(p => ({ ...p, hasSecondDriver: newValue })); 
-            onSecondDriverChange?.(newValue); // Posielame hneď novú hodnotu
+            onSecondDriverChange?.(newValue); 
           }}
           className={`group flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all duration-300 ${form.hasSecondDriver ? "border-amber-500/40 bg-amber-500/5 shadow-[0_0_20px_rgba(245,158,11,0.05)]" : "border-white/10 bg-slate-950/20 hover:border-white/20"}`}
         >
@@ -235,9 +361,33 @@ export function CarDetailReservationForm({
           <div className={`text-sm font-bold px-3 py-1 rounded-full ${form.hasSecondDriver ? 'bg-amber-500 text-slate-950' : 'bg-white/5 text-slate-400'}`}>+20 €</div>
         </div>
 
-        <button type="submit" disabled={isSubmitting} className="group relative w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-4 rounded-2xl transition-all shadow-[0_0_30px_rgba(14,165,233,0.3)] flex items-center justify-center gap-2">
-          {isSubmitting ? uiTexts.sending : <>{uiTexts.send} <Send size={16} className="transition-transform group-hover:translate-x-1" /></>}
-        </button>
+        {/* KALKULAČKA CENY (Upravená onTotalChange) */}
+        <div className="mt-4 pt-4 border-t border-white/5">
+          <CarPricingCalculator 
+            pricing={car.pricing}
+            from={from}
+            to={to}
+            pickupTime={pickupTime}
+            returnTime={returnTime}
+            pickupPrice={pickupLoc.price}
+            returnPrice={returnLoc.price}
+            hasSecondDriver={form.hasSecondDriver}
+            onTotalChange={(total) => {
+                setLocalPrice(total); // Uložíme cenu do lokálneho stavu formulára
+                onTotalPriceChange?.(total);
+            }}
+          />
+        </div>
+
+        <div className="pt-2">
+          <button 
+            type="submit" 
+            disabled={isSubmitting} 
+            className="group relative w-full bg-sky-500 hover:bg-sky-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-black py-4 rounded-2xl transition-all shadow-[0_0_30px_rgba(14,165,233,0.3)] flex items-center justify-center gap-2 active:scale-95"
+          >
+            {isSubmitting ? uiTexts.sending : <>{uiTexts.send} <Send size={16} className="transition-transform group-hover:translate-x-1" /></>}
+          </button>
+        </div>
       </form>
     </div>
   );

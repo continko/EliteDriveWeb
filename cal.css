@@ -1,0 +1,147 @@
+.elite-datepicker-wrapper .react-datepicker__day {
+  color: #cbd5e1 !important;
+  width: 13% !important;
+  line-height: 2.4rem !important;
+  margin: 0.5% !important;
+  border-radius: 0.6rem !important;
+  border: none !important;
+  transition: background 0.2s;
+}
+
+.elite-datepicker-wrapper .react-datepicker__month-container {
+  width: 100% !important;
+  float: none !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day--keyboard-selected,
+.elite-datepicker-wrapper .react-datepicker__day--focused,
+.elite-datepicker-wrapper .react-datepicker__day:focus {
+  background-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* --- VÝBER TERMÍNU (RANGE) - FIX PRE STRATENÉ KONCE --- */
+
+/* 1. Všetko v rozsahu (aj konce) dostane najprv modrastý podklad */
+.elite-datepicker-wrapper .react-datepicker__day--in-range,
+.elite-datepicker-wrapper .react-datepicker__day--in-selecting-range {
+  background-color: rgba(14, 165, 233, 0.2) !important;
+  color: #0ea5e9 !important;
+  border-radius: 0 !important; /* Prepojenie v strede */
+  opacity: 1 !important;
+}
+
+/* 2. ZAČIATOK VÝBERU */
+.elite-datepicker-wrapper .react-datepicker__day--range-start,
+.elite-datepicker-wrapper .react-datepicker__day--selecting-range-start {
+  background-color: #0ea5e9 !important;
+  color: #020617 !important;
+  border-radius: 0.6rem 0 0 0.6rem !important; /* Zaoblenie len vľavo */
+  font-weight: 900 !important;
+}
+
+/* 3. KONIEC VÝBERU (Fix pre image_898d45.png) */
+.elite-datepicker-wrapper .react-datepicker__day--range-end {
+  background-color: #0ea5e9 !important;
+  color: #020617 !important;
+  border-radius: 0 0.6rem 0.6rem 0 !important; /* Zaoblenie len vpravo */
+  font-weight: 900 !important;
+}
+
+/* 4. ŠPECIÁLNY PRÍPAD: Ak je vybraný len jeden deň (štart aj koniec je to isté) */
+.elite-datepicker-wrapper .react-datepicker__day--range-start.react-datepicker__day--range-end {
+  border-radius: 0.6rem !important;
+}
+
+/* --- OSTATNÉ STAVY --- */
+
+/* Dnešný deň */
+.elite-datepicker-wrapper .react-datepicker__day--today {
+  font-weight: bold !important;
+  border-bottom: 2px solid #0ea5e9 !important;
+}
+
+/* Rezervované (Červené) */
+.elite-datepicker-wrapper .booked-day {
+  color: #ef4444 !important;
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  text-decoration: line-through !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  border-radius: 0.6rem !important;
+}
+
+/* Minulosť */
+.elite-datepicker-wrapper .react-datepicker__day--disabled:not(.booked-day) {
+  color: #334155 !important;
+  opacity: 0.3 !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker,
+.elite-datepicker-wrapper .react-datepicker__header,
+.elite-datepicker-wrapper .react-datepicker__month {
+  background-color: transparent !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* --- DNI (Všeobecne) --- */
+.elite-datepicker-wrapper .react-datepicker__day {
+  color: #cbd5e1 !important;
+  width: 13% !important;
+  line-height: 2.4rem !important;
+  margin: 0.5% !important;
+  border-radius: 0.6rem !important;
+  border: none !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day--in-range {
+  background-color: rgba(14, 165, 233, 0.2) !important;
+  color: #0ea5e9 !important;
+  border-radius: 0 !important; 
+}
+
+/* Štart výberu: zaoblenie len vľavo + plná modrá */
+.elite-datepicker-wrapper .react-datepicker__day--range-start {
+  background-color: #0ea5e9 !important;
+  color: #020617 !important;
+  font-weight: 900 !important;
+  border-radius: 0.6rem 0 0 0.6rem !important;
+}
+
+/* Koniec výberu: zaoblenie len vpravo + plná modrá */
+.elite-datepicker-wrapper .react-datepicker__day--range-end {
+  background-color: #0ea5e9 !important;
+  color: #020617 !important;
+  font-weight: 900 !important;
+  border-radius: 0 0.6rem 0.6rem 0 !important;
+}
+
+/* Ak je vybraný len jeden deň: plné zaoblenie */
+.elite-datepicker-wrapper .react-datepicker__day--range-start.react-datepicker__day--range-end {
+  border-radius: 0.6rem !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day--keyboard-selected,
+.elite-datepicker-wrapper .react-datepicker__day--focused,
+.elite-datepicker-wrapper .react-datepicker__day:focus {
+  background-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day--today.react-datepicker__day--in-range {
+  border-bottom: none !important;
+}
+
+.elite-datepicker-wrapper .booked-day {
+  color: #ef4444 !important;
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  text-decoration: line-through !important;
+  border: 1px solid rgba(239, 68, 68, 0.1) !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day--disabled:not(.booked-day) {
+  color: #334155 !important;
+  opacity: 0.3 !important;
+}

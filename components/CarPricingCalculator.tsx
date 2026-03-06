@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react"; // Pridaný useEffect
 import type { PricingTier } from "@/lib/cars";
 import { useLang } from "@/context/LanguageContext";
 
@@ -14,6 +14,7 @@ type CarPricingCalculatorProps = {
   hasSecondDriver?: boolean;
   pickupTime?: string;
   returnTime?: string;
+  onTotalChange?: (price: number | null) => void; // Callback pre rodiča
 };
 
 function findTier(pricing: PricingTier[], days: number): PricingTier | undefined {
@@ -24,11 +25,9 @@ function findTier(pricing: PricingTier[], days: number): PricingTier | undefined
   });
 }
 
-// UPRAVENÁ FUNKCIA: Teraz počíta dni presne podľa dátumu AJ ČASU
 function calculateRentalDays(from: string, to: string, pickupTime: string, returnTime: string): number | null {
   if (!from || !to) return null;
   
-  // Vytvoríme ISO formát stringu pre korektný parse
   const start = new Date(`${from}T${pickupTime || "10:00"}`);
   const end = new Date(`${to}T${returnTime || "10:00"}`);
 
@@ -38,8 +37,6 @@ function calculateRentalDays(from: string, to: string, pickupTime: string, retur
   if (diffMs < 0) return null;
 
   const msPerDay = 1000 * 60 * 60 * 24;
-  
-  // Math.ceil zabezpečí, že ak je prenájom napr. 24 hodín a 1 minúta, započíta sa 2. deň
   const diffDays = Math.ceil(diffMs / msPerDay);
   
   return Math.max(1, diffDays);
@@ -51,17 +48,18 @@ export function CarPricingCalculator({
   returnPrice = 0, 
   hasSecondDriver = false,
   pickupTime = "10:00",
-  returnTime = "10:00"
+  returnTime = "10:00",
+  onTotalChange // Destrukcionalizácia novej prop
 }: CarPricingCalculatorProps) {
   const { lang } = useLang();
 
-  // 1. Výpočet dní (zohľadňuje už aj časy)
+  // 1. Výpočet dní
   const rentalDays = useMemo(() => 
     calculateRentalDays(from, to, pickupTime, returnTime), 
     [from, to, pickupTime, returnTime]
   );
 
-  // 2. Nájdenie správnej cenovej hladiny
+  // 2. Nájdenie cenovej hladiny
   const tier = useMemo(() => 
     (rentalDays != null ? findTier(pricing, rentalDays) : undefined), 
     [pricing, rentalDays]
@@ -76,6 +74,13 @@ export function CarPricingCalculator({
     
     return basePrice + extras;
   }, [rentalDays, tier, pickupPrice, returnPrice, hasSecondDriver]);
+
+  // NOVÉ: Odoslanie vypočítanej ceny do rodiča (CarDetailGrid)
+  useEffect(() => {
+    if (onTotalChange) {
+      onTotalChange(total);
+    }
+  }, [total, onTotalChange]);
 
   const uiTexts = {
     sk: {
@@ -125,29 +130,27 @@ export function CarPricingCalculator({
   const showResult = hasBothDates && rentalDays != null && tier && total != null;
 
   return (
-    <section className="relative overflow-hidden space-y-6 rounded-[3rem] border border-white/10 bg-slate-900/60 p-6 backdrop-blur-xl shadow-2xl sm:p-8">
+    <section className="">
       <header className="space-y-1">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-sky-400">{uiTexts.autoCalc}</p>
-        <h2 className="text-xl font-black text-white sm:text-2xl tracking-tight">{uiTexts.title}</h2>
+        <p className="text-[20px] font-black uppercase tracking-[0.3em] text-sky-400">{uiTexts.autoCalc}</p>
+        
         <p className="text-[11px] leading-relaxed text-slate-400">{uiTexts.desc}</p>
       </header>
 
       {!showResult ? (
         <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-4 text-center">
-          <p className="text-[11px] text-slate-500 italic">
+          <p className="text-[13px] text-slate-500 italic">
             {!hasBothDates ? uiTexts.selectDates : uiTexts.invalidRange}
           </p>
         </div>
       ) : (
-        <div className="grid gap-6 rounded-[2rem] border border-white/10 bg-slate-950/60 p-6 shadow-[0_0_30px_-10px_rgba(14,165,233,0.15)] sm:grid-cols-3">
-          {/* TRVANIE */}
+        <div className="grid gap-6 rounded-[1.5rem] border border-white/10 bg-slate-950/60 p-6 shadow-[0_0_30px_-10px_rgba(14,165,233,0.15)] sm:grid-cols-3">
           <div className="space-y-1">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{uiTexts.duration}</p>
             <p className="text-lg font-black text-white">{rentalDays} {getDayLabel(rentalDays)}</p>
             <p className="text-[10px] font-bold text-sky-400/80 uppercase">{tier.label}</p>
           </div>
           
-          {/* SADZBA */}
           <div className="space-y-1">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{uiTexts.rate}</p>
             <p className="text-lg font-black text-white">{tier.pricePerDay} €</p>
@@ -156,7 +159,6 @@ export function CarPricingCalculator({
             </p>
           </div>
 
-          {/* CELKOVÁ CENA */}
           <div className="space-y-1 border-t border-white/10 pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
             <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">{uiTexts.total}</p>
             <p className="text-3xl font-black text-amber-400 leading-none">

@@ -102,4 +102,92 @@ body {
   }
 }
 
+.elite-datepicker-wrapper {
+  width: 100%;
+  padding: 0.5rem;
+}
 
+.elite-datepicker-wrapper .react-datepicker {
+  background: transparent !important;
+  border: none !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__month-container {
+  width: 100% !important;
+  float: none !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding-top: 0 !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__current-month {
+  color: white !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  margin-bottom: 1rem !important;
+  font-size: 1rem !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day-name {
+  color: #475569 !important;
+  font-weight: 800 !important;
+  width: 13% !important; /* Responzívne rozdelenie na 7 dní */
+  margin: 0.5% !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day {
+  color: #cbd5e1 !important;
+  width: 13% !important;
+  line-height: 2.2rem !important;
+  margin: 0.5% !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.2s;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day:hover {
+  background-color: rgba(14, 165, 233, 0.2) !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day--selected,
+.elite-datepicker-wrapper .react-datepicker__day--range-start,
+.elite-datepicker-wrapper .react-datepicker__day--range-end {
+  background-color: #0ea5e9 !important;
+  color: #020617 !important;
+  font-weight: 900 !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day--in-range {
+  background-color: rgba(14, 165, 233, 0.25) !important;
+  color: #0ea5e9 !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day--disabled {
+  color: #1e293b !important;
+  text-decoration: line-through;
+  opacity: 0.3;
+}
+
+.elite-datepicker-wrapper .booked-day {
+  color: #ec0606 !important;
+  background-color: rgba(252, 0, 0, 0.25) !important;
+  text-decoration: line-through !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  border-radius: 0.6rem !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day--disabled:not(.booked-day) {
+  color: #334155 !important;
+  opacity: 0.3 !important;
+}
+
+.elite-datepicker-wrapper .react-datepicker__day--today {
+  font-weight: bold !important;
+  border:1px solid #0ea5e9 !important;
+  background-color: #0ea5e9;
+}
