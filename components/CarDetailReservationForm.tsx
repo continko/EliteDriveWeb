@@ -152,7 +152,7 @@ export function CarDetailReservationForm({
         pickup_location: pickupLoc.name,
         return_location: returnLoc.name,
         second_driver: form.hasSecondDriver,
-        total_price: finalPrice, // TERAZ UŽ NEBUDE NULL
+        total_price: finalPrice,
         status: 'pending'
       });
 
@@ -373,7 +373,7 @@ export function CarDetailReservationForm({
             returnPrice={returnLoc.price}
             hasSecondDriver={form.hasSecondDriver}
             onTotalChange={(total) => {
-                setLocalPrice(total); // Uložíme cenu do lokálneho stavu formulára
+                setLocalPrice(total);
                 onTotalPriceChange?.(total);
             }}
           />

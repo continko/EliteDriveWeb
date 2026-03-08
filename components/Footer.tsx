@@ -93,9 +93,16 @@ export function Footer() {
           <p className="text-[10px] font-medium text-slate-500 tracking-wide text-center">
             © {currentYear} <span className="text-white font-bold">EliteDrive</span>. Všetky práva vyhradené.
           </p>
-          <div className="flex gap-6 md:gap-8">
-            <Link href="#" className="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-tighter">Ochrana údajov</Link>
-            <Link href="#" className="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-tighter">Obchodné podmienky</Link>
+          <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+            <Link href="/ochrana-osobnych-udajov" className="text-[9px] font-black text-slate-500 hover:text-sky-500 uppercase tracking-[0.2em] transition-all">
+              Ochrana údajov
+            </Link>
+            <Link href="/obchodne-podmienky" className="text-[9px] font-black text-slate-500 hover:text-sky-500 uppercase tracking-[0.2em] transition-all">
+              Obchodné podmienky
+            </Link>
+            <Link href="/reklamacny-poriadok" className="text-[9px] font-black text-slate-500 hover:text-sky-500 uppercase tracking-[0.2em] transition-all">
+              Reklamačný poriadok
+            </Link>
           </div>
         </div>
       </div>
