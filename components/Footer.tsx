@@ -6,14 +6,13 @@ export function Footer() {
 
   return (
     <footer className="relative bg-[#020617] border-t border-white/5 pt-16 md:pt-24 pb-8 overflow-hidden">
-      {/* Dekoratívne svetlo v pozadí */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-sky-500/50 to-transparent" />
       <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[300px] md:w-[600px] h-[300px] bg-sky-500/10 blur-[80px] md:blur-[120px] rounded-full" />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16 mb-16 md:mb-20">
           
-          {/* LOGO & O NÁS - EliteDrive */}
+          {/* LOGO & O NÁS */}
           <div className="space-y-6 text-center md:text-left flex flex-col items-center md:items-start">
             <div className="flex items-center gap-3">
               <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center shadow-lg shadow-sky-500/20">
@@ -88,7 +87,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* BOTTOM BAR */}
+        {/* BOTTOM */}
         <div className="pt-8 border-t border-white/5 flex flex-col-reverse md:flex-row justify-between items-center gap-8">
           <p className="text-[10px] font-medium text-slate-500 tracking-wide text-center">
             © {currentYear} <span className="text-white font-bold">EliteDrive</span>. Všetky práva vyhradené.

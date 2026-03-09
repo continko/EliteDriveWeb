@@ -14,7 +14,6 @@ import { useLang } from "@/context/LanguageContext";
 export function CarIncludedSection() {
   const { lang } = useLang();
 
-  // Definícia položiek vovnútri komponentu pre prístup k prekladom
   const INCLUDED_ITEMS = [
     {
       icon: Car,

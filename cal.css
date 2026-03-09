@@ -21,48 +21,38 @@
   box-shadow: none !important;
 }
 
-/* --- VÝBER TERMÍNU (RANGE) - FIX PRE STRATENÉ KONCE --- */
-
-/* 1. Všetko v rozsahu (aj konce) dostane najprv modrastý podklad */
 .elite-datepicker-wrapper .react-datepicker__day--in-range,
 .elite-datepicker-wrapper .react-datepicker__day--in-selecting-range {
   background-color: rgba(14, 165, 233, 0.2) !important;
   color: #0ea5e9 !important;
-  border-radius: 0 !important; /* Prepojenie v strede */
+  border-radius: 0 !important;
   opacity: 1 !important;
 }
 
-/* 2. ZAČIATOK VÝBERU */
 .elite-datepicker-wrapper .react-datepicker__day--range-start,
 .elite-datepicker-wrapper .react-datepicker__day--selecting-range-start {
   background-color: #0ea5e9 !important;
   color: #020617 !important;
-  border-radius: 0.6rem 0 0 0.6rem !important; /* Zaoblenie len vľavo */
+  border-radius: 0.6rem 0 0 0.6rem !important;
   font-weight: 900 !important;
 }
 
-/* 3. KONIEC VÝBERU (Fix pre image_898d45.png) */
 .elite-datepicker-wrapper .react-datepicker__day--range-end {
   background-color: #0ea5e9 !important;
   color: #020617 !important;
-  border-radius: 0 0.6rem 0.6rem 0 !important; /* Zaoblenie len vpravo */
+  border-radius: 0 0.6rem 0.6rem 0 !important;
   font-weight: 900 !important;
 }
 
-/* 4. ŠPECIÁLNY PRÍPAD: Ak je vybraný len jeden deň (štart aj koniec je to isté) */
 .elite-datepicker-wrapper .react-datepicker__day--range-start.react-datepicker__day--range-end {
   border-radius: 0.6rem !important;
 }
 
-/* --- OSTATNÉ STAVY --- */
-
-/* Dnešný deň */
 .elite-datepicker-wrapper .react-datepicker__day--today {
   font-weight: bold !important;
   border-bottom: 2px solid #0ea5e9 !important;
 }
 
-/* Rezervované (Červené) */
 .elite-datepicker-wrapper .booked-day {
   color: #ef4444 !important;
   background-color: rgba(239, 68, 68, 0.1) !important;
@@ -71,7 +61,6 @@
   border-radius: 0.6rem !important;
 }
 
-/* Minulosť */
 .elite-datepicker-wrapper .react-datepicker__day--disabled:not(.booked-day) {
   color: #334155 !important;
   opacity: 0.3 !important;
@@ -85,7 +74,6 @@
   border: none !important;
 }
 
-/* --- DNI (Všeobecne) --- */
 .elite-datepicker-wrapper .react-datepicker__day {
   color: #cbd5e1 !important;
   width: 13% !important;
@@ -101,7 +89,6 @@
   border-radius: 0 !important; 
 }
 
-/* Štart výberu: zaoblenie len vľavo + plná modrá */
 .elite-datepicker-wrapper .react-datepicker__day--range-start {
   background-color: #0ea5e9 !important;
   color: #020617 !important;
@@ -109,7 +96,6 @@
   border-radius: 0.6rem 0 0 0.6rem !important;
 }
 
-/* Koniec výberu: zaoblenie len vpravo + plná modrá */
 .elite-datepicker-wrapper .react-datepicker__day--range-end {
   background-color: #0ea5e9 !important;
   color: #020617 !important;
@@ -117,7 +103,6 @@
   border-radius: 0 0.6rem 0.6rem 0 !important;
 }
 
-/* Ak je vybraný len jeden deň: plné zaoblenie */
 .elite-datepicker-wrapper .react-datepicker__day--range-start.react-datepicker__day--range-end {
   border-radius: 0.6rem !important;
 }

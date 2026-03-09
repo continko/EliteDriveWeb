@@ -13,8 +13,7 @@ export default function HomePage() {
 
   return (
     <main className="relative min-h-screen bg-[#020617] selection:bg-sky-500/30 overflow-hidden">
-      
-      {/* ATMOSFÉRICKÉ SVETLÁ */}
+
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 h-[1000px] w-full bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12),transparent_70%)] blur-[120px]" />
       </div>

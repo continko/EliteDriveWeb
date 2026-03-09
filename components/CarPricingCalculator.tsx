@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useEffect } from "react"; // Pridaný useEffect
+import { useMemo, useEffect } from "react";
 import type { PricingTier } from "@/lib/cars";
 import { useLang } from "@/context/LanguageContext";
 
@@ -8,13 +8,12 @@ type CarPricingCalculatorProps = {
   pricing: PricingTier[];
   from: string;
   to: string;
-  // NOVÉ PROPS
   pickupPrice?: number;
   returnPrice?: number;
   hasSecondDriver?: boolean;
   pickupTime?: string;
   returnTime?: string;
-  onTotalChange?: (price: number | null) => void; // Callback pre rodiča
+  onTotalChange?: (price: number | null) => void;
 };
 
 function findTier(pricing: PricingTier[], days: number): PricingTier | undefined {
@@ -49,23 +48,20 @@ export function CarPricingCalculator({
   hasSecondDriver = false,
   pickupTime = "10:00",
   returnTime = "10:00",
-  onTotalChange // Destrukcionalizácia novej prop
+  onTotalChange
 }: CarPricingCalculatorProps) {
   const { lang } = useLang();
 
-  // 1. Výpočet dní
   const rentalDays = useMemo(() => 
     calculateRentalDays(from, to, pickupTime, returnTime), 
     [from, to, pickupTime, returnTime]
   );
 
-  // 2. Nájdenie cenovej hladiny
   const tier = useMemo(() => 
     (rentalDays != null ? findTier(pricing, rentalDays) : undefined), 
     [pricing, rentalDays]
   );
 
-  // 3. FINÁLNY VÝPOČET CELKOVEJ CENY
   const total = useMemo(() => {
     if (rentalDays == null || !tier) return null;
     
@@ -75,7 +71,6 @@ export function CarPricingCalculator({
     return basePrice + extras;
   }, [rentalDays, tier, pickupPrice, returnPrice, hasSecondDriver]);
 
-  // NOVÉ: Odoslanie vypočítanej ceny do rodiča (CarDetailGrid)
   useEffect(() => {
     if (onTotalChange) {
       onTotalChange(total);

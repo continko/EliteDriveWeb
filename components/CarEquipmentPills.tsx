@@ -4,7 +4,6 @@ import { Bluetooth, Car, Lightbulb, Settings2, Snowflake, Speaker, Camera, Wind,
 import type { Car as CarType } from "@/lib/cars";
 import { useLang } from "@/context/LanguageContext";
 
-// 1. Definícia Props, aby TypeScript vedel, čo prichádza do komponentu
 type CarEquipmentPillsProps = {
   car: CarType;
 };
@@ -23,7 +22,6 @@ const EQUIPMENT_ICONS: Record<string, React.ComponentType<{ className?: string }
 };
 
 export function CarEquipmentPills({ car }: CarEquipmentPillsProps) {
-  // Pridaný defaultný prázdny objekt pre t, aby sa predišlo undefined chybám
   const { t = {}, lang } = useLang();
   
   if (!car.equipment?.length) return null;
@@ -33,11 +31,9 @@ export function CarEquipmentPills({ car }: CarEquipmentPillsProps) {
     
     if (lang === 'sk') return item;
 
-    // Bezpečný prístup k prekladom
     const translationKeys = Object.keys(t);
     const foundKey = translationKeys.find(key => lowerItem.includes(key.toLowerCase()));
 
-    // Ak nájdeme kľúč, vrátime preklad, inak pôvodný text
     return foundKey ? (t as Record<string, string>)[foundKey] : item;
   };
 
@@ -53,7 +49,6 @@ export function CarEquipmentPills({ car }: CarEquipmentPillsProps) {
       <div className="flex flex-wrap gap-3">
         {car.equipment.map((item) => {
           const lower = item.toLowerCase();
-          // Nájdenie správnej ikony podľa kľúčového slova v texte
           const iconKey = Object.keys(EQUIPMENT_ICONS).find(k => lower.includes(k)) || "default";
           const Icon = EQUIPMENT_ICONS[iconKey];
           

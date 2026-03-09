@@ -75,7 +75,7 @@ export function CarDetailGrid({ car, power, zeroToHundred }: CarDetailGridProps)
         </div>
       </div>
 
-      {/* PRAVÝ PANEL (Sticky) */}
+      {/* PRAVÝ PANEL */}
       <div className="space-y-10 lg:sticky lg:top-14">
         <div className="relative">
           <div className="relative rounded-[3rem] bg-white/5 backdrop-blur-3xl border border-white/10 overflow-hidden">
@@ -85,7 +85,6 @@ export function CarDetailGrid({ car, power, zeroToHundred }: CarDetailGridProps)
               to={to}
               onChangeFrom={setFrom}
               onChangeTo={setTo}
-              // PREPOJENIE FUNKCIÍ Z FORMULÁRA
               onPickupChange={setPickupPrice}
               onReturnChange={setReturnPrice}
               onSecondDriverChange={setHasSecondDriver}

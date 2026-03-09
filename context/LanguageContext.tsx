@@ -7,7 +7,6 @@ const LanguageContext = createContext<any>(null);
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLang] = useState<'sk' | 'en' | 'bs'>('sk');
 
-  // Načítanie uloženého jazyka z prehliadača (voliteľné)
   useEffect(() => {
     const savedLang = localStorage.getItem('lang') as any;
     if (savedLang) setLang(savedLang);

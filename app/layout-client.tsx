@@ -1,4 +1,3 @@
-// app/layout-client.tsx
 "use client";
 
 import { ReactNode } from "react";
@@ -11,7 +10,6 @@ import { LanguageProvider } from '@/context/LanguageContext';
 export default function RootLayoutClient({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   
-  // Zistíme, či sme v admin sekcii
   const isAdminPage = pathname?.startsWith('/admin');
 
   return (
@@ -37,14 +35,12 @@ export default function RootLayoutClient({ children }: { children: ReactNode }) 
       />
 
       <div className="relative flex min-h-screen flex-col">
-        {/* NAVBAR - Zobrazí sa len ak NIE SME v admine */}
         {!isAdminPage && <Navbar />}
         
         <main className="flex-1">
           {children}
         </main>
 
-        {/* FOOTER - Zobrazí sa len ak NIE SME v admine */}
         {!isAdminPage && <Footer />}
       </div>
     </LanguageProvider>

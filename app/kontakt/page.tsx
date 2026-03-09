@@ -11,7 +11,7 @@ export default function ContactPage() {
       <div className="max-w-7xl mx-auto px-4">
         
         <div className="grid lg:grid-cols-2 gap-20 items-start">
-          {/* INFO STRANA */}
+          {/* INFO */}
           <div>
             <h1 className="text-7xl font-black tracking-tighter mb-8 text-white">{t.contact_page_title}</h1>
             <p className="text-slate-400 text-lg mb-12 max-w-md italic leading-relaxed">
@@ -45,7 +45,7 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* FORMULÁR STRANA */}
+          {/* FORMULÁR */}
           <div className="relative p-12 rounded-[4rem] bg-gradient-to-b from-white/[0.05] to-transparent border border-white/10">
             <h3 className="text-2xl font-black mb-8 uppercase tracking-tight">{t.contact_form_title}</h3>
             <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>

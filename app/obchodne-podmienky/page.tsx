@@ -31,11 +31,9 @@ export default function VOPPage() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
-          
-          {/* MAIN LEGAL CONTENT */}
+
           <div className="lg:col-span-8 space-y-24 text-xs md:text-sm leading-relaxed border-l border-white/5 pl-8 md:pl-12">
 
-            {/* ČLÁNOK 1: ÚVODNÉ USTANOVENIA */}
             <section className="space-y-6">
               <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
                 <span className="text-sky-500">01.</span> Úvodné ustanovenia a definície
@@ -47,7 +45,6 @@ export default function VOPPage() {
               </div>
             </section>
 
-            {/* ČLÁNOK 2: PODMIENKY SPÔSOBILOSTI */}
             <section className="space-y-6">
               <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
                 <span className="text-sky-500">02.</span> Podmienky pre Nájomcu
@@ -59,7 +56,6 @@ export default function VOPPage() {
               </div>
             </section>
 
-            {/* ČLÁNOK 3: REZERVÁCIA A STORNO */}
             <section className="space-y-6">
               <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
                 <span className="text-sky-500">03.</span> Rezervácia a Storno podmienky
@@ -74,7 +70,6 @@ export default function VOPPage() {
               </div>
             </section>
 
-            {/* ČLÁNOK 4: NÁJOMNÉ A DEPOZIT */}
             <section className="space-y-6">
               <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
                 <span className="text-sky-500">04.</span> Nájomné a Finančná zábezpeka
@@ -86,7 +81,6 @@ export default function VOPPage() {
               </div>
             </section>
 
-            {/* ČLÁNOK 5: ODOVZDANIE A VRÁTENIE */}
             <section className="space-y-6">
               <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
                 <span className="text-sky-500">05.</span> Protokol o odovzdaní a vrátení
@@ -98,7 +92,6 @@ export default function VOPPage() {
               </div>
             </section>
 
-            {/* ČLÁNOK 6: POVINNOSTI A ZÁKAZY (BRUTÁLNA ČASŤ) */}
             <section className="space-y-8">
               <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
                 <span className="text-sky-500">06.</span> Povinnosti a Zákazy
@@ -130,7 +123,6 @@ export default function VOPPage() {
               </div>
             </section>
 
-            {/* ČLÁNOK 7: GPS MONITORING */}
             <section className="space-y-6">
               <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
                 <span className="text-sky-500">07.</span> GPS Monitorovanie a telemetria
@@ -139,7 +131,6 @@ export default function VOPPage() {
               <p>7.2. Pri zistení hrubého zaobchádzania (opakované prekračovanie rýchlosti, jazda v obmedzovači) má Prenajímateľ právo vypovedať zmluvu a vozidlo okamžite odobrať bez nároku na vrátenie nájomného.</p>
             </section>
 
-            {/* ČLÁNOK 8: SANKCIE (SADZOBNÍK) */}
             <section className="space-y-6">
               <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
                 <span className="text-sky-500">08.</span> Sadzobník pokút a poplatkov
@@ -161,7 +152,6 @@ export default function VOPPage() {
               </div>
             </section>
 
-            {/* ČLÁNOK 9: POKUTY A RADARY */}
             <section className="space-y-6 italic">
               <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
                 <span className="text-sky-500">09.</span> Dopravné priestupky
@@ -170,7 +160,6 @@ export default function VOPPage() {
               <p>9.2. V prípade doručenia pokuty po ukončení nájmu (objektívna zodpovednosť), Prenajímateľ prefaktúruje pokutu Nájomcovi spolu s manipulačným poplatkom 20 € za spracovanie každej pokuty.</p>
             </section>
 
-            {/* ZÁVEREČNÉ USTANOVENIA */}
             <section className="pt-20 border-t border-white/10 italic">
               <p className="text-[10px] text-slate-600 leading-relaxed italic">
                 Právne vzťahy neupravené touto zmluvou sa riadia Obchodným zákonníkom SR. Nájomca vyhlasuje, že zmluvu uzatvára slobodne a vážne. Miestne príslušným súdom pre všetky spory je Okresný súd v sídle Prenajímateľa.
@@ -179,7 +168,6 @@ export default function VOPPage() {
 
           </div>
 
-          {/* SIDEBAR / QUICK STATS */}
           <aside className="lg:col-span-4 italic">
             <div className="sticky top-32 space-y-6">
               <div className="p-8 rounded-[3rem] bg-sky-500 text-black">

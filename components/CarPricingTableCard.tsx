@@ -12,7 +12,6 @@ type CarPricingTableCardProps = {
 export function CarPricingTableCard({ car, pricing }: CarPricingTableCardProps) {
   const { lang, t } = useLang();
 
-  // Pomocná funkcia na formátovanie ceny nad limit
   function formatOverLimit(value: number) {
     const formatted = value.toFixed(2).replace(".", ",");
     return `${formatted} €/km`;
@@ -24,8 +23,8 @@ export function CarPricingTableCard({ car, pricing }: CarPricingTableCardProps) 
     let translated = label;
     if (lang === 'en') {
     return label
-      .replace('deň', 'day')   // "1 deň" -> "1 day"
-      .replace(/dni|dní/g, 'days') // "1-3 dni" -> "1-3 days"
+      .replace('deň', 'day')
+      .replace(/dni|dní/g, 'days')
       .replace('viac', 'more');
   }
 

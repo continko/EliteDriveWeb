@@ -31,13 +31,10 @@ export default function OchranaOsobnychUdajov() {
           </div>
         </header>
 
-        {/* FULL LEGAL TEXT INFRASTRUCTURE */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 italic">
           
-          {/* MAIN CONTENT AREA */}
           <div className="lg:col-span-8 space-y-20 italic text-slate-400">
-            
-            {/* 1. ÚVOD A IDENTIFIKÁCIA */}
+
             <section id="uvod" className="space-y-6 italic">
               <h2 className="text-2xl font-black text-white uppercase italic italic flex items-center gap-4 italic">
                 <span className="text-sky-500 italic">01.</span> Identifikačné údaje
@@ -57,7 +54,6 @@ export default function OchranaOsobnychUdajov() {
               </div>
             </section>
 
-            {/* 2. ROZSAH A KATEGÓRIE */}
             <section className="space-y-6 italic">
               <h2 className="text-2xl font-black text-white uppercase italic italic flex items-center gap-4 italic">
                 <span className="text-sky-500 italic">02.</span> Rozsah spracúvaných údajov
@@ -84,7 +80,6 @@ export default function OchranaOsobnychUdajov() {
               </div>
             </section>
 
-            {/* 3. ÚČELY A PRÁVNY ZÁKLAD */}
             <section className="space-y-6 italic">
               <h2 className="text-2xl font-black text-white uppercase italic italic flex items-center gap-4 italic">
                 <span className="text-sky-500 italic">03.</span> Účely a právny základ
@@ -121,7 +116,6 @@ export default function OchranaOsobnychUdajov() {
               </div>
             </section>
 
-            {/* 4. GPS MONITOROVANIE - DETAILNÁ INFRA */}
             <section className="space-y-6 italic">
               <div className="p-8 rounded-[2rem] bg-sky-500 text-black italic">
                 <h2 className="text-2xl font-black uppercase italic italic mb-4 italic italic">04. GPS Monitoring</h2>
@@ -141,7 +135,6 @@ export default function OchranaOsobnychUdajov() {
               </div>
             </section>
 
-            {/* 5. PRÍJEMCOVIA A PRENOSY */}
             <section className="space-y-6 italic">
               <h2 className="text-2xl font-black text-white uppercase italic italic flex items-center gap-4 italic">
                 <span className="text-sky-500 italic">05.</span> Príjemcovia údajov
@@ -157,7 +150,6 @@ export default function OchranaOsobnychUdajov() {
               </div>
             </section>
 
-            {/* 6. VAŠE PRÁVA */}
             <section className="space-y-8 italic">
               <h2 className="text-2xl font-black text-white uppercase italic italic flex items-center gap-4 italic">
                 <span className="text-sky-500 italic">06.</span> Práva dotknutej osoby
@@ -179,7 +171,6 @@ export default function OchranaOsobnychUdajov() {
               </div>
             </section>
 
-            {/* 7. ZÁVEREČNÉ USTANOVENIA */}
             <section className="space-y-6 italic">
               <h2 className="text-2xl font-black text-white uppercase italic italic italic">07. Záverečné ustanovenia</h2>
               <p className="text-xs leading-relaxed italic italic">
@@ -189,7 +180,6 @@ export default function OchranaOsobnychUdajov() {
 
           </div>
 
-          {/* SIDEBAR NAVIGATION / INFO BOX */}
           <aside className="lg:col-span-4 italic">
             <div className="sticky top-32 space-y-6 italic">
               <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 italic">
@@ -219,7 +209,7 @@ export default function OchranaOsobnychUdajov() {
 
       <footer className="mt-40 py-10 text-center italic italic italic italic">
         <p className="text-[9px] text-slate-700 font-black uppercase tracking-[0.5em] italic italic italic italic">
-          &copy; 2024 EliteDrive s.r.o. | Legal Integrity Layer
+          &copy; 2026 EliteDrive s.r.o. | Legal Integrity Layer
         </p>
       </footer>
     </main>

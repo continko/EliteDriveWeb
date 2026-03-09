@@ -8,8 +8,7 @@ import { faqTranslations } from "@/lib/faqData";
 export function FAQSection() {
   const [openId, setOpenId] = useState<string | null>(null);
   const { lang } = useLang();
-
-  // Vyberieme dáta podľa jazyka, ak nie sú, dáme SK
+  
   const content = faqTranslations[lang as keyof typeof faqTranslations] || faqTranslations.sk;
 
   return (
@@ -24,7 +23,7 @@ export function FAQSection() {
         </p>
       </div>
 
-      {/* Grid s kategóriami */}
+      {/* Grid */}
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
         {content.categories.map((cat: any, catIdx: number) => (
           <div key={catIdx} className="space-y-6">

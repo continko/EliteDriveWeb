@@ -1,7 +1,6 @@
 "use client";
 
 import { Calendar } from "@/components/ui/calendar";
-// Importujeme lokalizácie pre kalendár
 import { sk, enGB, bs } from "date-fns/locale";
 import { useLang } from "@/context/LanguageContext";
 
@@ -32,12 +31,10 @@ export function CarDateRangePicker({
   onChangeTo,
   bookedDates
 }: CarDateRangePickerProps) {
-  const { lang } = useLang(); // Získame aktuálny jazyk
+  const { lang } = useLang(); 
 
-  // Vyberieme správnu lokalizáciu pre date-fns (kalendár)
   const calendarLocale = lang === 'en' ? enGB : lang === 'bs' ? bs : sk;
-  
-  // Preklad labelu
+ 
   const labelText = {
     sk: "Vyberte termín prenájmu",
     en: "Select rental period",
@@ -70,7 +67,7 @@ export function CarDateRangePicker({
           }}
           disabled={disabledDates}
           excludeDisabled
-          locale={calendarLocale} // TOTO prepína jazyk dní a mesiacov
+          locale={calendarLocale}
           showOutsideDays={false}
           className="w-full"
           classNames={{

@@ -11,7 +11,7 @@ export const translations = {
     hero_title_span: "nezabudnete.",
     hero_subtitle: "Starostlivo vybraná kolekcia športových a luxusných vozidiel pre tých, ktorí od jazdy očakávajú dokonalosť.",
 
-    // Tlačidlá a štítky v kartách áut
+    // Tlačidlá 
     car_power: "Výkon",
     car_engine: "Motor",
     car_acceleration: "0-100 km/h",
@@ -20,7 +20,7 @@ export const translations = {
     car_btn_reserve: "Rezervovať jazdu",
     car_btn_details: "Detail vozidla",
 
-    // Ostatné (ako predtým)
+    // Ostatné 
     benefit_1_label: "Zážitok",
     benefit_1_text: "Špičkové modely v bezchybnom stave.",
     benefit_2_label: "Flexibilita",

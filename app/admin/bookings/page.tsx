@@ -140,7 +140,6 @@ export default function AdminBookings() {
 
                 return (
                   <div key={b.id} className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/20 p-8 transition-all hover:bg-slate-900/40 hover:border-white/20">
-                    {/* ZMENA: items-center -> items-start */}
                     <div className="grid grid-cols-1 md:grid-cols-5 items-start gap-8">
                       
                       {/* AUTO & CENA */}
@@ -204,7 +203,6 @@ export default function AdminBookings() {
                         </div>
                       </div>
 
-                      {/* AKCIE - Pridané md:self-start pre zarovnanie hore */}
                       <div className="flex justify-center md:justify-end gap-3 md:self-start">
                         {b.status === 'pending' ? (
                           <>

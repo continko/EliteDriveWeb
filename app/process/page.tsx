@@ -7,10 +7,8 @@ import { processTranslations } from "@/lib/processData";
 export default function ProcessPage() {
   const { lang } = useLang();
   
-  // Výber správneho prekladu podľa aktuálneho jazyka
   const content = processTranslations[lang as keyof typeof processTranslations] || processTranslations.sk;
 
-  // Mapa ikoniek pre jednotlivé kroky
   const icons = [<Calendar size={32} />, <ShieldCheck size={32} />, <Key size={32} />];
 
   return (
@@ -43,7 +41,7 @@ export default function ProcessPage() {
                 <p className="text-slate-400 text-lg leading-relaxed mb-8">{step.desc}</p>
               </div>
 
-              {/* Box s detailmi (Checklist) */}
+              {/* Checklist */}
               <div className="bg-white/5 rounded-[3rem] p-10 border border-white/5">
                 <ul className="space-y-4">
                   {step.details.map((detail: string, dIdx: number) => (

@@ -29,10 +29,8 @@ export default function ReklamacnyPoriadok() {
           </p>
         </header>
 
-        {/* FULL LEGAL TEXT */}
         <div className="space-y-16 text-xs md:text-sm leading-relaxed text-slate-400">
-          
-          {/* ČLÁNOK 1 */}
+
           <section className="space-y-4">
             <h2 className="text-xl font-black text-white uppercase italic tracking-tight flex items-center gap-3">
               <span className="text-sky-500">I.</span> Úvodné ustanovenia
@@ -44,7 +42,6 @@ export default function ReklamacnyPoriadok() {
             </div>
           </section>
 
-          {/* ČLÁNOK 2 */}
           <section className="space-y-4">
             <h2 className="text-xl font-black text-white uppercase italic tracking-tight flex items-center gap-3">
               <span className="text-sky-500">II.</span> Zodpovednosť za vady
@@ -55,7 +52,6 @@ export default function ReklamacnyPoriadok() {
             </div>
           </section>
 
-          {/* ČLÁNOK 3 */}
           <section className="space-y-4">
             <h2 className="text-xl font-black text-white uppercase italic tracking-tight flex items-center gap-3">
               <span className="text-sky-500">III.</span> Postup uplatnenia reklamácie
@@ -70,7 +66,6 @@ export default function ReklamacnyPoriadok() {
             </div>
           </section>
 
-          {/* ČLÁNOK 4 */}
           <section className="space-y-4">
             <h2 className="text-xl font-black text-white uppercase italic tracking-tight flex items-center gap-3">
               <span className="text-sky-500">IV.</span> Vybavenie reklamácie
@@ -82,7 +77,6 @@ export default function ReklamacnyPoriadok() {
             </div>
           </section>
 
-          {/* ČLÁNOK 5 - ARS (POVINNÉ ZO ZÁKONA) */}
           <section className="space-y-4">
             <h2 className="text-xl font-black text-white uppercase italic tracking-tight flex items-center gap-3">
               <span className="text-sky-500">V.</span> Alternatívne riešenie sporov (ARS)
@@ -96,7 +90,6 @@ export default function ReklamacnyPoriadok() {
             </div>
           </section>
 
-          {/* ČLÁNOK 6 */}
           <section className="space-y-4">
             <h2 className="text-xl font-black text-white uppercase italic tracking-tight flex items-center gap-3">
               <span className="text-sky-500">VI.</span> Záverečné ustanovenia
@@ -130,7 +123,7 @@ export default function ReklamacnyPoriadok() {
 
       <footer className="mt-40 py-10 text-center border-t border-white/5 italic">
         <p className="text-[9px] text-slate-700 font-black uppercase tracking-[0.5em] italic">
-          EliteDrive s.r.o. &copy; 2024 Legal Infrastructure
+          EliteDrive s.r.o. &copy; 2026 Legal Infrastructure
         </p>
       </footer>
     </main>

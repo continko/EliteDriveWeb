@@ -3,7 +3,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import { CalendarDays, CarFront, Clock, Info, MapPin } from "lucide-react";
 import type { Car } from "@/lib/cars";
-import { supabase } from "@/lib/supabase"; // Predpokladám, že tu máš inicializovaného klienta
+import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
 
 type ReservationFormProps = {
@@ -37,7 +37,6 @@ export function ReservationForm({ cars }: ReservationFormProps) {
     setErrorMessage(null);
 
     try {
-      // Odoslanie dát do tabuľky 'bookings', ktorú si v SQL úspešne vytvoril
       const { error } = await supabase
         .from('bookings')
         .insert([
@@ -53,7 +52,6 @@ export function ReservationForm({ cars }: ReservationFormProps) {
       if (error) throw error;
 
       setSubmitted(true);
-      // Reset formulára po úspechu
       setForm({
         from: "",
         to: "",

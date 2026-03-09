@@ -6,12 +6,10 @@ import toast from "react-hot-toast";
 import type { Car } from "@/lib/cars";
 import { supabase } from "@/lib/supabase";
 import { useLang } from "@/context/LanguageContext";
-
 import DatePicker, { registerLocale } from "react-datepicker";
 import { sk } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
 import { startOfDay, format } from "date-fns";
-
 import { CarPricingCalculator } from "./CarPricingCalculator";
 
 registerLocale("sk", sk);
@@ -62,8 +60,7 @@ export function CarDetailReservationForm({
   const [returnTime, setReturnTime] = useState("10:00");
   const [openDropdown, setOpenDropdown] = useState<'pickup' | 'return' | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // PRIDANÉ: Lokálny stav na zachytenie ceny z kalkulačky
+
   const [localPrice, setLocalPrice] = useState<number | null>(null);
   
   const [bookedIntervals, setBookedIntervals] = useState<{ start: Date; end: Date }[]>([]);
@@ -137,7 +134,6 @@ export function CarDetailReservationForm({
     }
     setIsSubmitting(true);
 
-    // Použijeme localPrice (z kalkulačky) alebo totalPrice (z props)
     const finalPrice = localPrice || totalPrice;
 
     try {
@@ -269,7 +265,7 @@ export function CarDetailReservationForm({
           </div>
         </div>
 
-        {/* SEKCOIA: KALENDÁR */}
+        {/* SEKCIA: KALENDÁR */}
         <div className="space-y-4 rounded-3xl border border-white/5 bg-slate-950/20 p-6">
           <label className={labelClass}><Calendar size={12} className="text-sky-500" /> {uiTexts.selectDate}</label>
           
@@ -357,7 +353,7 @@ export function CarDetailReservationForm({
           <div className={`text-sm font-bold px-3 py-1 rounded-full ${form.hasSecondDriver ? 'bg-amber-500 text-slate-950' : 'bg-white/5 text-slate-400'}`}>+20 €</div>
         </div>
 
-        {/* KALKULAČKA CENY (Upravená onTotalChange) */}
+        {/* KALKULAČKA CENY */}
         <div className="mt-4 pt-4 border-t border-white/5">
           <CarPricingCalculator 
             pricing={car.pricing}

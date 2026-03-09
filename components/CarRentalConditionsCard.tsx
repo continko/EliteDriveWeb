@@ -11,7 +11,6 @@ type CarRentalConditionsCardProps = {
 export function CarRentalConditionsCard({ car }: CarRentalConditionsCardProps) {
   const { lang } = useLang();
 
-  // Definícia textov plynulo podľa jazyka
   const ui = {
     sk: {
       rules: "Pravidlá",
@@ -46,7 +45,7 @@ export function CarRentalConditionsCard({ car }: CarRentalConditionsCardProps) {
       licenseDesc: `Vlasnik vozačke dozvole najmanje ${car.minLicenseYears} godin${car.minLicenseYears === 1 ? "u" : "e"}.`,
       info: "Vozilo je namijenjeno isključivo za uobičajeni cestovni saobraćaj. Zabranjena je vožnja na stazi, driftanje i ekstremno opterećenje."
     }
-  }[lang as 'sk' | 'en' | 'bs'] || {}; // Fallback ak by lang nebol definovaný
+  }[lang as 'sk' | 'en' | 'bs'] || {};
 
   return (
     <section className="relative overflow-hidden space-y-6 rounded-[3rem] border border-white/10 bg-slate-900/60 p-6 backdrop-blur-xl shadow-2xl sm:p-8">
@@ -84,7 +83,7 @@ export function CarRentalConditionsCard({ car }: CarRentalConditionsCardProps) {
           </div>
         </div>
 
-        {/* Info Box - Icy Look */}
+        {/* Info Box */}
         <div className="flex gap-4 rounded-[2rem] bg-sky-500/5 p-5 border border-sky-500/10 backdrop-blur-md">
           <Info className="h-5 w-5 shrink-0 text-sky-400 mt-0.5" />
           <p className="text-xs leading-relaxed text-slate-400 font-medium italic">

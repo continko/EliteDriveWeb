@@ -7,10 +7,8 @@ import { processTranslations } from "@/lib/processData";
 export default function ProcessPage() {
   const { lang } = useLang();
   
-  // Výber správneho prekladu podľa aktuálneho jazyka
   const content = processTranslations[lang as keyof typeof processTranslations] || processTranslations.sk;
 
-  // Mapa ikoniek pre jednotlivé kroky
   const icons = [<Calendar size={32} />, <ShieldCheck size={32} />, <Key size={32} />];
 
   return (
@@ -30,7 +28,6 @@ export default function ProcessPage() {
         <div className="space-y-12">
           {content.steps.map((step: any, idx: number) => (
             <div key={idx} className="group relative grid md:grid-cols-2 gap-12 items-center p-12 rounded-[4rem] border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all hover:border-sky-500/20">
-              {/* Veľké číslo v pozadí */}
               <div className="absolute -top-10 -left-10 text-[12rem] font-black text-white/[0.02] pointer-events-none group-hover:text-sky-500/5 transition-colors">
                 {step.id}
               </div>
@@ -43,7 +40,6 @@ export default function ProcessPage() {
                 <p className="text-slate-400 text-lg leading-relaxed mb-8">{step.desc}</p>
               </div>
 
-              {/* Box s detailmi (Checklist) */}
               <div className="bg-white/5 rounded-[3rem] p-10 border border-white/5">
                 <ul className="space-y-4">
                   {step.details.map((detail: string, dIdx: number) => (

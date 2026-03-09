@@ -13,7 +13,6 @@ export function Navbar() {
   
   const { lang, changeLang, t } = useLang();
 
-  // Zavrie dropdown pri kliknutí mimo neho
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (langRef.current && !langRef.current.contains(event.target as Node)) {
@@ -80,7 +79,7 @@ export function Navbar() {
               ))}
             </div>
 
-            {/* ROLOVACÍ JAZYKOVÝ PREPÍNAČ */}
+            {/* LANGUAGE SWITCHER */}
             <div className="relative" ref={langRef}>
               <button
                 onClick={() => setIsLangOpen(!isLangOpen)}
@@ -147,7 +146,6 @@ export function Navbar() {
           
           <div className="h-px bg-white/5 w-full" />
           
-          {/* Prepínanie jazykov v mobile menu - horizontálne pre prehľadnosť */}
           <div className="flex gap-4">
             {languages.map((l) => (
               <button

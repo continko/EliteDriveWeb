@@ -11,14 +11,13 @@ export default function FlotilaPage() {
   return (
     <main className="relative min-h-screen bg-[#020617] pt-40 pb-24 overflow-hidden">
       
-      {/* BACKGROUND EFFECTS */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[600px] w-full bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.08),transparent_70%)] blur-[100px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         
-        {/* HEADER SEKCOA */}
+        {/* HEADER */}
         <div className="mb-20 text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/5 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] text-sky-400">
             <CarFront className="h-4 w-4" />
@@ -32,7 +31,7 @@ export default function FlotilaPage() {
           </p>
         </div>
 
-        {/* FILTRE (Vizuálne) */}
+        {/* FILTRE */}
         <div className="mb-16 flex flex-wrap justify-center gap-3">
           {t.fleet_filters.map((filter: string, idx: number) => (
             <button 
@@ -52,7 +51,7 @@ export default function FlotilaPage() {
           </button>
         </div>
 
-        {/* GRID SO VŠETKÝMI AUTAMI */}
+        {/* GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {cars.map((car) => (
             <div key={car.id} className="group transition-all duration-500 hover:-translate-y-2">
@@ -61,7 +60,7 @@ export default function FlotilaPage() {
           ))}
         </div>
 
-        {/* EXTRA INFO - FAQ LINK */}
+        {/* FAQ LINK */}
         <div className="mt-32 rounded-[3.5rem] border border-white/5 bg-white/[0.01] p-12 text-center backdrop-blur-sm">
           <h3 className="text-2xl font-black text-white mb-4">{t.fleet_not_found_title}</h3>
           <p className="text-slate-500 mb-8 max-w-lg mx-auto text-sm italic">

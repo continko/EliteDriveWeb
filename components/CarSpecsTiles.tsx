@@ -104,15 +104,11 @@ export function CarSpecsTiles({ car, power, zeroToHundred }: CarSpecsTilesProps)
             <div 
               key={item.key} 
               className="group relative rounded-[2.5rem] p-px overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_-5px_rgba(14,165,233,0.3)]"
-              /* Efekt svietiaceho rohu cez inline style pre maximálnu kontrolu */
               style={{
                 background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 100%)'
               }}
             >
-              {/* Vnútorné telo karty */}
               <div className="relative flex h-full flex-col gap-5 rounded-[2.5rem] bg-slate-900/90 p-6 backdrop-blur-xl">
-                
-                {/* Ikona s vlastným "glow" efektom */}
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950/40 text-sky-400 ring-1 ring-white/10 transition-all duration-300 group-hover:scale-110 group-hover:bg-sky-500 group-hover:text-slate-950 group-hover:ring-sky-500 group-hover:shadow-[0_0_20px_rgba(14,165,233,0.4)]">
                   <Icon className="h-5 w-5" />
                 </div>

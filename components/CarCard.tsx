@@ -13,15 +13,12 @@ type CarCardProps = {
 export function CarCard({ car }: CarCardProps) {
   const { t, lang } = useLang();
 
-  // Získame najnižšiu cenu
   const startingPrice = car.pricing?.length 
     ? car.pricing[car.pricing.length - 1].pricePerDay 
     : 0;
 
-  // Pomocná funkcia na vytiahnutie kW
   const powerKw = car.power.split(" ")[0];
 
-  // Funkcia na preklad technických údajov (Benzín -> Petrol, atď.)
   const translateSpec = (value: string) => {
     const specs: Record<string, Record<string, string>> = {
       "Benzín": { en: "Petrol", bs: "Benzin" },
@@ -38,7 +35,7 @@ export function CarCard({ car }: CarCardProps) {
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/60 backdrop-blur-xl transition-all duration-500 hover:border-sky-500/50 hover:shadow-[0_0_50px_-12px_rgba(14,165,233,0.3)]">
       
-      {/* OBRÁZOK SEKCIA */}
+      {/* OBRÁZOK */}
       <div className="relative h-64 w-full p-3">
         <div className="relative h-full w-full overflow-hidden rounded-[2rem]">
           <Image

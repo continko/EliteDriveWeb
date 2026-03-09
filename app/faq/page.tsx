@@ -13,7 +13,6 @@ export default function FAQPage() {
           {t.nav_faq}
         </h1>
       </div>
-      {/* Tu sa deje všetka mágia */}
       <FAQSection />
     </main>
   );
