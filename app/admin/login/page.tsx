@@ -16,7 +16,7 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -26,7 +26,6 @@ export default function AdminLogin() {
       setLoading(false);
     } else {
       toast.success("Vitaj späť!");
-      // Jednoduchý router push teraz bude fungovať, lebo ho nič nezruší
       router.push("/admin/bookings");
     }
   };
@@ -45,9 +44,9 @@ export default function AdminLogin() {
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1 flex items-center gap-2">
               <Mail size={12} className="text-sky-500" /> E-mail
             </label>
-            <input 
-              type="email" 
-              required 
+            <input
+              type="email"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-slate-950/40 border border-white/10 rounded-2xl px-5 py-4 text-sm outline-none focus:border-sky-500/50 transition-all placeholder:text-slate-700"
@@ -59,9 +58,9 @@ export default function AdminLogin() {
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1 flex items-center gap-2">
               <Lock size={12} className="text-sky-500" /> Heslo
             </label>
-            <input 
-              type="password" 
-              required 
+            <input
+              type="password"
+              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-slate-950/40 border border-white/10 rounded-2xl px-5 py-4 text-sm outline-none focus:border-sky-500/50 transition-all placeholder:text-slate-700"
@@ -69,8 +68,8 @@ export default function AdminLogin() {
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
             className="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-4 rounded-2xl transition-all shadow-lg shadow-sky-500/20 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
           >

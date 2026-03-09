@@ -19,7 +19,6 @@ import { toast } from "react-hot-toast";
 export default function AdminBookings() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [authChecked, setAuthChecked] = useState(false);
   const router = useRouter();
 
   const fetchBookings = async () => {
@@ -38,16 +37,7 @@ export default function AdminBookings() {
   };
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        router.replace("/admin/login");
-      } else {
-        setAuthChecked(true);
-        fetchBookings();
-      }
-    };
-    checkAuth();
+    fetchBookings();
 
     const subscription = supabase
       .channel('bookings_updates')
@@ -59,7 +49,7 @@ export default function AdminBookings() {
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, [router]);
+  }, []);
 
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase
@@ -93,7 +83,7 @@ export default function AdminBookings() {
       return sum + price;
     }, 0);
 
-  if (!authChecked || loading) return (
+  if (loading) return (
     <div className="flex min-h-screen items-center justify-center bg-[#020617]">
       <div className="text-center space-y-4">
         <div className="h-12 w-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto" />

@@ -72,10 +72,9 @@ export function CarDetailReservationForm({
     const fetchBookings = async () => {
       const fullCarName = `${car.brand} ${car.name}`;
       const { data } = await supabase
-        .from("bookings")
+        .from("public_bookings")
         .select("start_date, end_date")
-        .eq("car_name", fullCarName)
-        .eq("status", "confirmed");
+        .eq("car_name", fullCarName);
 
       if (data) {
         const intervals = data.map((b) => ({
@@ -183,7 +182,8 @@ export function CarDetailReservationForm({
       toast.success(lang === 'sk' ? "Dopyt bol odoslaný!" : "Request sent!");
       setForm(p => ({ ...p, name: "", phone: "", email: "" }));
 
-    } catch (err) {
+    } catch (err: any) {
+      console.error("REZERVACIA ERROR:", JSON.stringify(err));
       toast.error(lang === 'sk' ? "Chyba pri odosielaní." : "Error sending request.");
     } finally {
       setIsSubmitting(false);
