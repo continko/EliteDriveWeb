@@ -152,7 +152,7 @@ export function CarPricingCalculator({
           </div>
           
           <div className="space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{uiTexts.rate}</p>
+            <p className="text-[30px] font-black uppercase tracking-widest text-slate-500">{uiTexts.rate}</p>
             <p className="text-lg font-black text-white">{tier.pricePerDay} €</p>
             <p className="text-[10px] font-bold text-slate-400 uppercase">
               {uiTexts.limit} {tier.dailyKmLimit} {uiTexts.kmDay}
@@ -161,7 +161,7 @@ export function CarPricingCalculator({
 
           <div className="space-y-1 border-t border-white/10 pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
             <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">{uiTexts.total}</p>
-            <p className="text-3xl font-black text-amber-400 leading-none">
+            <p className="text-2xl font-black text-amber-400 leading-none">
               {total.toLocaleString(lang === 'sk' ? "sk-SK" : "en-US")} €
             </p>
             <p className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter mt-1">{uiTexts.vatIncl}</p>

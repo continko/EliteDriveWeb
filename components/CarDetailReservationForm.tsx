@@ -174,14 +174,10 @@ export function CarDetailReservationForm({
         `Vodič navyše: ${form.hasSecondDriver ? "Áno ✅" : "Nie ❌"}`
       ].join('\n');
       
-      await fetch(`https://api.telegram.org/bot8542236541:AAF-Aqux4lhxd-Sosb6bqEF71UH-v8GQjrU/sendMessage`, {
+      await fetch('/api/notify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          chat_id: '7979398003', 
-          text: msg, 
-          parse_mode: 'Markdown' 
-        })
+        body: JSON.stringify({ text: msg }),
       });
 
       toast.success(lang === 'sk' ? "Dopyt bol odoslaný!" : "Request sent!");
