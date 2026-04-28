@@ -1,8 +1,56 @@
+"use client";
+
 import Link from "next/link";
 import { Instagram, Facebook, Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 export function Footer() {
+  const { lang } = useLang();
   const currentYear = new Date().getFullYear();
+
+  const footerTexts = {
+    sk: {
+      about: "Prémiová požičovňa vozidiel, ktorá prináša zážitok z jazdy priamo k vám. Kvalita a štýl bez kompromisov pod značkou EliteDrive.",
+      contactTitle: "Kontakt",
+      callUs: "Zavolajte nám",
+      writeUs: "Napíšte nám",
+      locationTitle: "Kde nás nájdete",
+      locationCountry: "Slovenská republika",
+      locationDesc: "Pôsobíme v mestách Žilina, Dolný Kubín, Bratislava a po dohode celá SR.",
+      rights: "Všetky práva vyhradené.",
+      privacy: "Ochrana údajov",
+      terms: "Obchodné podmienky",
+      complaints: "Reklamačný poriadok"
+    },
+    en: {
+      about: "Premium car rental service bringing the driving experience directly to you. Quality and style without compromise under the EliteDrive brand.",
+      contactTitle: "Contact",
+      callUs: "Call us",
+      writeUs: "Email us",
+      locationTitle: "Find us",
+      locationCountry: "Slovak Republic",
+      locationDesc: "We operate in Žilina, Dolný Kubín, Bratislava, and across the whole country upon agreement.",
+      rights: "All rights reserved.",
+      privacy: "Privacy Policy",
+      terms: "Terms & Conditions",
+      complaints: "Refund Policy"
+    },
+    bs: {
+      about: "Premium rent-a-car usluga koja donosi iskustvo vožnje direktno vama. Kvalitet i stil bez kompromisa pod brendom EliteDrive.",
+      contactTitle: "Kontakt",
+      callUs: "Pozovite nas",
+      writeUs: "Pišite nam",
+      locationTitle: "Gdje nas naći",
+      locationCountry: "Slovačka Republika",
+      locationDesc: "Poslujemo u Žilini, Dolnom Kubínu, Bratislavi i po dogovoru u cijeloj Slovačkoj.",
+      rights: "Sva prava pridržana.",
+      privacy: "Polisa privatnosti",
+      terms: "Uslovi korištenja",
+      complaints: "Reklamacije"
+    }
+  };
+
+  const ui = footerTexts[lang as keyof typeof footerTexts] || footerTexts.sk;
 
   return (
     <footer className="relative bg-[#020617] border-t border-white/5 pt-16 md:pt-24 pb-8 overflow-hidden">
@@ -21,7 +69,7 @@ export function Footer() {
               <span className="text-2xl font-black text-white tracking-tighter uppercase">EliteDrive</span>
             </div>
             <p className="text-sm leading-relaxed text-slate-400 max-w-xs mx-auto md:mx-0">
-              Prémiová požičovňa vozidiel, ktorá prináša zážitok z jazdy priamo k vám. Kvalita a štýl bez kompromisov pod značkou EliteDrive.
+              {ui.about}
             </p>
             <div className="flex gap-4 pt-2">
               {[Instagram, Facebook].map((Icon, i) => (
@@ -32,31 +80,19 @@ export function Footer() {
             </div>
           </div>
 
-          {/* RÝCHLE ODKAZY */}
-          <div className="space-y-6 text-center md:text-left">
-            <h4 className="text-[12px] font-black uppercase tracking-[0.3em] text-sky-500">Navigácia</h4>
-            <ul className="grid grid-cols-2 gap-4 md:flex md:flex-col md:gap-4">
-              {['Vozový park', 'Cenník', 'O nás', 'Kontakt'].map((link) => (
-                <li key={link}>
-                  <Link href="#" className="group flex items-center justify-center md:justify-start text-sm font-medium text-slate-300 hover:text-white transition-colors py-2 md:py-0">
-                    {link}
-                    <ArrowUpRight size={14} className="ml-1 opacity-40 md:opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-0.5 text-sky-500" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* PRÁZDNY STLPEC PRE ROZOSTUP ALEBO LINKY */}
+          <div className="hidden lg:block"></div>
 
           {/* KONTAKTY */}
           <div className="space-y-6 text-center md:text-left">
-            <h4 className="text-[12px] font-black uppercase tracking-[0.3em] text-sky-500">Kontakt</h4>
+            <h4 className="text-[12px] font-black uppercase tracking-[0.3em] text-sky-500">{ui.contactTitle}</h4>
             <div className="space-y-4 md:space-y-6">
               <Link href="tel:+421900000000" className="flex items-center md:items-start gap-4 p-4 md:p-0 rounded-2xl border border-white/5 md:border-none bg-white/5 md:bg-transparent justify-center md:justify-start">
                 <div className="h-10 w-10 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center text-sky-400 shrink-0">
                   <Phone size={16} />
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="hidden md:block text-[10px] font-bold text-slate-500 uppercase tracking-widest text-left">Zavolajte nám</span>
+                  <span className="hidden md:block text-[10px] font-bold text-slate-500 uppercase tracking-widest text-left">{ui.callUs}</span>
                   <span className="text-sm font-bold text-slate-200">+421 900 000 000</span>
                 </div>
               </Link>
@@ -65,7 +101,7 @@ export function Footer() {
                   <Mail size={16} />
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="hidden md:block text-[10px] font-bold text-slate-500 uppercase tracking-widest text-left">Napíšte nám</span>
+                  <span className="hidden md:block text-[10px] font-bold text-slate-500 uppercase tracking-widest text-left">{ui.writeUs}</span>
                   <span className="text-sm font-bold text-slate-200">info@elitedrive.sk</span>
                 </div>
               </Link>
@@ -74,14 +110,14 @@ export function Footer() {
 
           {/* LOKALITA */}
           <div className="space-y-6">
-            <h4 className="text-[12px] font-black uppercase tracking-[0.3em] text-sky-500 text-center md:text-left">Kde nás nájdete</h4>
+            <h4 className="text-[12px] font-black uppercase tracking-[0.3em] text-sky-500 text-center md:text-left">{ui.locationTitle}</h4>
             <div className="rounded-[2rem] border border-white/5 bg-slate-950/40 p-6 space-y-4 text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-3">
                 <MapPin className="text-sky-500" size={18} />
-                <span className="text-sm font-bold text-white">Slovenská republika</span>
+                <span className="text-sm font-bold text-white italic">{ui.locationCountry}</span>
               </div>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                Pôsobíme v mestách Žilina, Dolný Kubín, Bratislava a po dohode celá SR.
+              <p className="text-[11px] text-slate-400 leading-relaxed italic">
+                {ui.locationDesc}
               </p>
             </div>
           </div>
@@ -89,18 +125,18 @@ export function Footer() {
 
         {/* BOTTOM */}
         <div className="pt-8 border-t border-white/5 flex flex-col-reverse md:flex-row justify-between items-center gap-8">
-          <p className="text-[10px] font-medium text-slate-500 tracking-wide text-center">
-            © {currentYear} <span className="text-white font-bold">EliteDrive</span>. Všetky práva vyhradené.
+          <p className="text-[10px] font-medium text-slate-500 tracking-wide text-center uppercase">
+            © {currentYear} <span className="text-white font-bold">EliteDrive</span>. {ui.rights}
           </p>
           <div className="flex flex-wrap justify-center gap-6 md:gap-8">
-            <Link href="/ochrana-osobnych-udajov" className="text-[9px] font-black text-slate-500 hover:text-sky-500 uppercase tracking-[0.2em] transition-all">
-              Ochrana údajov
+            <Link href="/privacy" className="text-[9px] font-black text-slate-500 hover:text-sky-500 uppercase tracking-[0.2em] transition-all">
+              {ui.privacy}
             </Link>
-            <Link href="/obchodne-podmienky" className="text-[9px] font-black text-slate-500 hover:text-sky-500 uppercase tracking-[0.2em] transition-all">
-              Obchodné podmienky
+            <Link href="/terms" className="text-[9px] font-black text-slate-500 hover:text-sky-500 uppercase tracking-[0.2em] transition-all">
+              {ui.terms}
             </Link>
-            <Link href="/reklamacny-poriadok" className="text-[9px] font-black text-slate-500 hover:text-sky-500 uppercase tracking-[0.2em] transition-all">
-              Reklamačný poriadok
+            <Link href="/complaints" className="text-[9px] font-black text-slate-500 hover:text-sky-500 uppercase tracking-[0.2em] transition-all">
+              {ui.complaints}
             </Link>
           </div>
         </div>

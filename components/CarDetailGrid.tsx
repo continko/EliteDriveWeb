@@ -51,11 +51,11 @@ export function CarDetailGrid({ car, power, zeroToHundred }: CarDetailGridProps)
             
             <div className="absolute left-8 top-8 flex gap-4">
               <div className="inline-flex items-center gap-2 rounded-2xl bg-white/50 border border-white/10 px-4 py-2 text-[12px] font-black uppercase tracking-widest text-sky-500 backdrop-blur-xl">
-                <CarFront className="h-4 w-4 text-sky-500" />
+                <CarFront className="h-2 w-4 text-sky-500" />
                 <span>{car.brand}</span>
               </div>
               <div className="inline-flex items-center gap-2 rounded-2xl bg-white/50 border border-white/10 px-4 py-2 text-[12px] font-black uppercase tracking-widest text-sky-500 backdrop-blur-xl">
-                <Zap className="h-4 w-4 text-sky-500" />
+                <Zap className="h-2 w-4 text-sky-500" />
                 <span>{modelLabel} {car.year}</span>
               </div>
             </div>
@@ -94,19 +94,6 @@ export function CarDetailGrid({ car, power, zeroToHundred }: CarDetailGridProps)
             />
           </div>
         </div>
-        
-        {/* PREPOJENIE DÁT DO KALKULAČKY */}
-        {/* <CarPricingCalculator 
-          pricing={car.pricing} 
-          from={from} 
-          to={to}
-          pickupPrice={pickupPrice}
-          returnPrice={returnPrice}
-          hasSecondDriver={hasSecondDriver}
-          pickupTime={pickupTime}
-          returnTime={returnTime}
-          onTotalChange={setTotalPrice}
-        /> */}
 
         <CarRentalConditionsCard car={car} />
       </div>

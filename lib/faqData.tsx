@@ -17,7 +17,6 @@ export const faqTranslations: any = {
           { q: "Musím platiť zálohu pri rezervácii?", a: "Nie, pri rezervácii neplatíte nič. Celkovú cenu prenájmu a zábezpeku uhradíte až pri prevzatí vozidla – prostredníctvom platobnej brány online, bankovým prevodom vopred alebo v hotovosti (len cena prenájmu, nie zábezpeka)." },
           { q: "Aké sú storno podmienky?", a: "Storno je ZADARMO! Rezerváciu môžete zrušiť kedykoľvek bez storno poplatku. Upozornenie: Pri opakovanom účelovom rušení rezervácií si vyhradzujeme právo odmietnuť budúce prenájmy." },
           { q: "Môže s vozidlom jazdiť aj iná osoba?", a: "Áno, ale musí byť vopred nahlásená a schválená. Dodatočný vodič musí spĺňať rovnaké podmienky (18+, platný VP), bude uvedený v zmluve a za každého vodiča sa účtuje jednorazový poplatok. Dôležité: Ak vozidlo vedie osoba, ktorá nie je uvedená v zmluve, poistenie neplatí!" },
-          { q: "Ako fungujú darčekové poukážky?", a: "Darčeková poukážka je ideálny darček! Platnosť: 12 mesiacov, hodnoty: od 50€ po vlastnú sumu. Doručenie: okamžite na e-mail v PDF." }
         ]
       },
       {
