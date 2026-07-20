@@ -113,7 +113,7 @@ export default function NewCarPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <InputGroup label="Značka" placeholder="napr. Porsche" 
-                          onChange={v => setFormData({...formData, brand: v})} />
+                          onChange={(v: any) => setFormData({...formData, brand: v})} />
               <InputGroup label="Model" placeholder="napr. 911 GT3 RS" 
                           onChange={v => setFormData({...formData, name: v})} />
             </div>
