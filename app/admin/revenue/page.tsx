@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { 
   FileText, Receipt, ArrowDownToLine,
   CheckCircle2, Loader2, Upload as UploadIcon,
-  Landmark, Fuel, Wrench, MoreHorizontal, Calendar, Zip
+  Landmark, Fuel, Wrench, MoreHorizontal, Calendar
 } from "lucide-react";
 import JSZip from "jszip"; // Importujeme knižnicu
 
