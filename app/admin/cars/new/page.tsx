@@ -135,9 +135,9 @@ export default function NewCarPage() {
                 </select>
               </div>
               <InputGroup label="Palivo" placeholder="Benzín" icon={<Fuel size={12}/>}
-                          onChange={v => setFormData({...formData, fuel: v})} />
+                          onChange={(v: any) => setFormData({...formData, fuel: v})} />
               <InputGroup label="Výkon" placeholder="525 hp / 465 Nm" icon={<Zap size={12}/>}
-                          onChange={v => setFormData({...formData, power: v})} />
+                          onChange={(v: any) => setFormData({...formData, power: v})} />
             </div>
           </div>
 
@@ -158,7 +158,7 @@ export default function NewCarPage() {
             </div>
 
             <InputGroup label="URL Fotografie (High Res)" placeholder="https://images.ultimatedrive.sk/911-gt3.jpg" icon={<ImageIcon size={12}/>}
-                        onChange={v => setFormData({...formData, image_url: v})} />
+                        onChange={(v: any) => setFormData({...formData, image_url: v})} />
           </div>
         </div>
 
