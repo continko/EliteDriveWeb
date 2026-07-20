@@ -1,3 +1,6 @@
+import { supabase } from "@/lib/supabase"; // Tvoj univerzálny Supabase klient
+
+// 1. Tieto typy ti zostávajú presne tak, ako ich máš (aby ti frontend nezlyhal)
 export type PricingTier = {
   label: string;
   daysFrom: number;
@@ -27,301 +30,170 @@ export type Car = {
   tow: string;
   equipment: string[];
   bookedDates: string[];
+  repairPriceBasic: number;
+  repairPriceStandard: number;
+  participationBasic: string;
+  participationStandard: string;
 };
 
-export const cars: Car[] = [
-  {
-    id: "bmw-m5-f90-2023",
-    brand: "BMW",
-    name: "M5 Competition (F90)",
-    year: 2023,
-    color: "Marina Bay Blue",
-    imageUrl: "https://hips.hearstapps.com/hmg-prod/images/2021-bmw-m5-competition-1146-1625696565.jpg",
-    transmission: "automat",
-    fuel: "Benzín",
-    drive: "4x4 (xDrive)",
-    seats: 5,
-    pricing: [
-      { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 300, pricePerDay: 350 },
-      { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 250, pricePerDay: 290 },
-      { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 210, pricePerDay: 240 },
-      { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 180, pricePerDay: 210 },
-      { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 150, pricePerDay: 190 },
-      { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 120, pricePerDay: 150 }
-    ],
-    deposit: 2500,
-    overLimitPerKm: 0.9,
-    minAge: 18,
-    minLicenseYears: 1,
-    power: "460 kW / 625 hp",
-    consumption: "11.1 L/100km",
-    tow: "Nie",
-    equipment: ["M Karbón-keramické brzdy", "Laserové svetlá", "Harman Kardon", "Odvietrané sedadlá", "360° kamera"],
-    bookedDates: ["2026-03-05", "2026-03-06"] 
-  },
-  {
-    id: "bmw-m3-g80-2024",
-    brand: "BMW",
-    name: "M3 Competition (G80)",
-    year: 2024,
-    color: "Brooklyn Grey",
-    imageUrl: "https://media.dreamcargiveaways.co.uk/media/transformed/PVfnXHducLSeVGZpGCJww0?w=3840",
-    transmission: "automat",
-    fuel: "Benzín",
-    drive: "4x4 (xDrive)",
-    seats: 5,
-    pricing: [
-      { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 300, pricePerDay: 350 },
-      { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 250, pricePerDay: 290 },
-      { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 210, pricePerDay: 240 },
-      { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 180, pricePerDay: 210 },
-      { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 150, pricePerDay: 190 },
-      { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 120, pricePerDay: 150 }
-    ],
-    deposit: 2500,
-    overLimitPerKm: 0.9,
-    minAge: 18,
-    minLicenseYears: 1,
-    power: "375 kW / 510 hp",
-    consumption: "10.2 L/100km",
-    tow: "Nie",
-    equipment: ["Laser", "M Brzdy"],
-    bookedDates: []
-  },
-  {
-    id: "bmw-m3-g81-2024",
-    brand: "BMW",
-    name: "M3 Touring (G81)",
-    year: 2024,
-    color: "Isle of Man Green",
-    imageUrl: "https://www.automoli.com/common/vehicles/_assets/img/gallery/f71/bmw-m3-touring-g81_1.jpg",
-    transmission: "automat",
-    fuel: "Benzín",
-    drive: "4x4 (xDrive)",
-    seats: 5,
-    pricing: [
-      { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 300, pricePerDay: 350 },
-      { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 250, pricePerDay: 290 },
-      { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 210, pricePerDay: 240 },
-      { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 180, pricePerDay: 210 },
-      { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 150, pricePerDay: 190 },
-      { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 120, pricePerDay: 150 }
-    ],
-    deposit: 2500,
-    overLimitPerKm: 0.8,
-    minAge: 18,
-    minLicenseYears: 1,
-    power: "375 kW / 510 hp",
-    consumption: "10.4 L/100km",
-    tow: "Nie",
-    equipment: ["Panoráma", "M Brzdy"],
-    bookedDates: []
-  },
-  {
-    id: "bmw-m4-g82-2025",
-    brand: "BMW",
-    name: "M4 Competition (G82)",
-    year: 2025,
-    color: "São Paulo Yellow",
-    imageUrl: "https://www.mad4wheels.com/img/free-car-images/mobile/20895/bmw-m4-g82-coupe-2025-751707.jpg",
-    transmission: "automat",
-    fuel: "Benzín",
-    drive: "4x4 (xDrive)",
-    seats: 4,
-    pricing: [
-      { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 300, pricePerDay: 350 },
-      { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 250, pricePerDay: 290 },
-      { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 210, pricePerDay: 240 },
-      { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 180, pricePerDay: 210 },
-      { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 150, pricePerDay: 190 },
-      { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 120, pricePerDay: 150 }
-    ],
-    deposit: 2500,
-    overLimitPerKm: 0.9,
-    minAge: 18,
-    minLicenseYears: 1,
-    power: "390 kW / 530 hp",
-    consumption: "10.1 L/100km",
-    tow: "Nie",
-    equipment: ["Karbón", "M Brzdy"],
-    bookedDates: []
-  },
-  {
-    id: "bmw-x5m-2025",
-    brand: "BMW",
-    name: "X5M",
-    year: 2025,
-    color: "Dravit Grey",
-    imageUrl: "https://s1.cdn.autoevolution.com/images/news/the-first-ever-2025-bmw-x5-m-cs-competition-sport-doesn-t-exist-yet-in-the-real-world-219597-7.jpg",
-    transmission: "automat",
-    fuel: "Benzín",
-    drive: "4x4 (xDrive)",
-    seats: 5,
-    pricing: [
-      { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 300, pricePerDay: 350 },
-      { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 250, pricePerDay: 290 },
-      { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 210, pricePerDay: 240 },
-      { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 180, pricePerDay: 210 },
-      { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 150, pricePerDay: 190 },
-      { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 120, pricePerDay: 150 }
-    ],
-    deposit: 2500,
-    overLimitPerKm: 0.8,
-    minAge: 18,
-    minLicenseYears: 1,
-    power: "460 kW / 625 hp",
-    consumption: "12.9 L/100km",
-    tow: "Áno",
-    equipment: ["M Brzdy", "Soft-close"],
-    bookedDates: []
-  },
-  {
-    id: "audi-rs3-2024",
-    brand: "Audi",
-    name: "RS3 8Y",
-    year: 2024,
-    color: "Kyalami Green",
-    imageUrl: "https://media.ed.edmunds-media.com/audi/rs-3/2022/oem/2022_audi_rs-3_sedan_base_fq_oem_2_1600.jpg",
-    transmission: "automat",
-    fuel: "Benzín",
-    drive: "4x4",
-    seats: 5,
-    pricing: [
-      { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 300, pricePerDay: 220 },
-      { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 250, pricePerDay: 200 },
-      { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 210, pricePerDay: 170 },
-      { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 180, pricePerDay: 150 },
-      { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 150, pricePerDay: 120 },
-      { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 120, pricePerDay: 100 }
-    ],
-    deposit: 2000,
-    overLimitPerKm: 0.6,
-    minAge: 18,
-    minLicenseYears: 1,
-    power: "294 kW / 400 hp",
-    consumption: "9.1 L/100km",
-    tow: "Nie",
-    equipment: ["RS Výfuk", "Matrix LED"],
-    bookedDates: []
-  },
-  {
-    id: "audi-rs6-avant-2024",
-    brand: "Audi",
-    name: "RS6 Avant",
-    year: 2024,
-    color: "Nardo Grey",
-    imageUrl: "https://cdn.motor1.com/images/mgl/W8oJZg/s1/2024-audi-rs6-avant-performance-pricing.jpg",
-    transmission: "automat",
-    fuel: "Benzín",
-    drive: "4x4",
-    seats: 5,
-    pricing: [
-      { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 300, pricePerDay: 350 },
-      { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 250, pricePerDay: 290 },
-      { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 210, pricePerDay: 240 },
-      { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 180, pricePerDay: 210 },
-      { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 150, pricePerDay: 190 },
-      { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 120, pricePerDay: 150 }
-    ],
-    deposit: 2500,
-    overLimitPerKm: 0.9,
-    minAge: 18,
-    minLicenseYears: 1,
-    power: "463 kW / 630 hp",
-    consumption: "12.4 L/100km",
-    tow: "Áno",
-    equipment: ["RS Performance", "Bang & Olufsen"],
-    bookedDates: []
-  },
-  {
-    id: "audi-rs7-2024",
-    brand: "Audi",
-    name: "RS7 Sportback",
-    year: 2024,
-    color: "Black",
-    imageUrl: "https://www.abt-america.com/fileadmin/processed/c/1/csm_RS7_LE_USA_01_c169f03d0e.jpg",
-    transmission: "automat",
-    fuel: "Benzín",
-    drive: "4x4",
-    seats: 5,
-    pricing: [
-      { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 300, pricePerDay: 350 },
-      { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 250, pricePerDay: 290 },
-      { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 210, pricePerDay: 240 },
-      { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 180, pricePerDay: 210 },
-      { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 150, pricePerDay: 190 },
-      { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 120, pricePerDay: 150 }
-    ],
-    deposit: 2500,
-    overLimitPerKm: 0.9,
-    minAge: 18,
-    minLicenseYears: 1,
-    power: "463 kW / 630 hp",
-    consumption: "12.5 L/100km",
-    tow: "Nie",
-    equipment: ["Matrix LED", "RS Design blue"],
-    bookedDates: []
-  },
-  {
-    id: "mercedes-c63-amg-2023",
-    brand: "Mercedes-Benz",
-    name: "C63 AMG",
-    year: 2023,
-    color: "Matte Black",
-    imageUrl: "https://images.pistonheads.com/nimg/46601/blobid0.jpg",
-    transmission: "automat",
-    fuel: "Benzín",
-    drive: "4x4",
-    seats: 5,
-    pricing: [
-      { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 300, pricePerDay: 350 },
-      { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 250, pricePerDay: 290 },
-      { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 210, pricePerDay: 240 },
-      { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 180, pricePerDay: 210 },
-      { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 150, pricePerDay: 190 },
-      { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 120, pricePerDay: 150 }
-    ],
-    deposit: 2500,
-    overLimitPerKm: 0.9,
-    minAge: 18,
-    minLicenseYears: 1,
-    power: "500 kW / 680 hp",
-    consumption: "6.9 L/100km",
-    tow: "Nie",
-    equipment: ["AMG Performance", "Burmester"],
-    bookedDates: []
-  },
-  {
-    id: "porsche-911-gt3",
-    brand: "Porsche",
-    name: "911 GT3 Clubsport",
-    year: 2023,
-    color: "Shark Blue",
-    imageUrl: "https://cdn.elferspot.com/wp-content/uploads/2024/11/11/porsche-992-gt3-1.jpeg?class=xl",
-    transmission: "automat",
-    fuel: "Benzín",
-    drive: "Zadný pohon",
-    seats: 2,
-    pricing: [
-      { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 300, pricePerDay: 750 },
-      { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 250, pricePerDay: 670 },
-      { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 210, pricePerDay: 620 },
-      { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 180, pricePerDay: 570 },
-      { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 150, pricePerDay: 530 },
-      { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 120, pricePerDay: 480 }
-    ],
-    deposit: 5000,
-    overLimitPerKm: 1.3,
-    minAge: 18,
-    minLicenseYears: 1,
-    power: "375 kW / 510 hp",
-    consumption: "13.0 L/100km",
-    tow: "Nie",
-    equipment: ["Chrono Paket", "Karbónové sedačky"],
-    bookedDates: []
-  }
-];
+// 2. Definujeme si typ, ako presne ti prichádzajú surové dáta zo Supabase
+export type SupabaseCarResponse = {
+  id: string;
+  brand: string;
+  name: string;
+  year: number;
+  color: string;
+  image_url: string; // V databáze máš pravdepodobne snake_case
+  transmission: "automat";
+  fuel: "Benzín";
+  drive: string;
+  seats: number;
+  over_limit_per_km: number;
+  min_age: number;
+  min_license_years: number;
+  power: string;
+  consumption: string;
+  tow: string;
+  equipment: string[];
+  booked_dates: string[];
+  repair_price_basic: number;
+  repair_price_standard: number;
+  participation_basic: string;
+  participation_standard: string;
+  car_prices: {
+    price_1_day: number;
+    price_2_3_days: number;
+    price_4_7_days: number;
+    price_8_14_days: number;
+    price_15_22_days: number;
+    price_23_plus_days: number;
+    km_limit_1_day: number;
+    km_limit_2_3_days: number;
+    km_limit_4_7_days: number;
+    km_limit_8_14_days: number;
+    km_limit_15_22_days: number;
+    km_limit_23_plus_days: number;
+    deposit: number;
+    currency: string;
+    market: string;
+  }[];
+};
 
-export function getCarById(id: string): Car | undefined {
-  return cars.find((car) => car.id === id);
+// 3. Helper funkcia, ktorá vezme dáta z DB a pretransformuje ich na tvoj starý typ 'Car'
+export function mapDbCarToFrontend(dbCar: SupabaseCarResponse): Car {
+  // POISTKA: Skontrolujeme, či pole car_prices vôbec existuje a má aspoň jeden záznam
+  const prices = dbCar.car_prices && dbCar.car_prices.length > 0 ? dbCar.car_prices[0] : undefined;
+
+  // Ak prices existuje, namapujeme reálne hodnoty s poistkami na nuly (ak by bolo niečo null v DB).
+  // Ak prices neexistuje, vygeneruje sa pole s nulovými hodnotami, aby nespadol frontend.
+  const pricing: PricingTier[] = prices 
+    ? [
+        { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: prices.km_limit_1_day || 0, pricePerDay: prices.price_1_day || 0 },
+        { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: prices.km_limit_2_3_days || 0, pricePerDay: prices.price_2_3_days || 0 },
+        { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: prices.km_limit_4_7_days || 0, pricePerDay: prices.price_4_7_days || 0 },
+        { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: prices.km_limit_8_14_days || 0, pricePerDay: prices.price_8_14_days || 0 },
+        { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: prices.km_limit_15_22_days || 0, pricePerDay: prices.price_15_22_days || 0 },
+        { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: prices.km_limit_23_plus_days || 0, pricePerDay: prices.price_23_plus_days || 0 }
+      ]
+    : [
+        { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: 0, pricePerDay: 0 },
+        { label: "2–3 dni", daysFrom: 2, daysTo: 3, dailyKmLimit: 0, pricePerDay: 0 },
+        { label: "4–7 dní", daysFrom: 4, daysTo: 7, dailyKmLimit: 0, pricePerDay: 0 },
+        { label: "8–14 dní", daysFrom: 8, daysTo: 14, dailyKmLimit: 0, pricePerDay: 0 },
+        { label: "15–22 dní", daysFrom: 15, daysTo: 22, dailyKmLimit: 0, pricePerDay: 0 },
+        { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 0, pricePerDay: 0 }
+      ];
+
+  // BEZPEČNÝ OBRÁZKOVÝ FALLBACK: 
+  const cleanUrl = dbCar.image_url?.trim();
+  const verifiedImageUrl = cleanUrl && cleanUrl !== "" 
+    ? dbCar.image_url 
+    : "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=600&auto=format&fit=crop"; 
+
+  return {
+    id: dbCar.id,
+    brand: dbCar.brand || "—",
+    name: dbCar.name || "Bez názvu",
+    year: dbCar.year || 2024,
+    color: dbCar.color || "—",
+    imageUrl: verifiedImageUrl,
+    transmission: dbCar.transmission || "automat",
+    fuel: dbCar.fuel || "Benzín",
+    drive: dbCar.drive || "—",
+    seats: dbCar.seats || 4,
+    deposit: prices ? (prices.deposit || 2500) : 2500,
+    overLimitPerKm: dbCar.over_limit_per_km || 0,
+    minAge: dbCar.min_age || 18,
+    minLicenseYears: dbCar.min_license_years || 1,
+    power: dbCar.power || "—",
+    consumption: dbCar.consumption || "—",
+    tow: dbCar.tow || "—",
+    equipment: dbCar.equipment || [],
+    bookedDates: dbCar.booked_dates || [],
+    repairPriceBasic: dbCar.repair_price_basic || 0,
+    repairPriceStandard: dbCar.repair_price_standard || 0,
+    participationBasic: dbCar.participation_basic || "—",
+    participationStandard: dbCar.participation_standard || "—",
+    pricing: pricing,
+  };
+}
+
+// ==========================================
+// DOPLNENÉ FUNKCIE PRE KOMUNIKÁCIU SO SUPABASE
+// ==========================================
+
+// Funkcia pre hlavnú stránku a katalóg (Flotilu)
+export async function getCarsFromDatabase(marketCode: string = "sk"): Promise<Car[]> {
+  const { data, error } = await supabase
+    .from("cars")
+    .select(`
+      *,
+      car_prices (*)
+    `);
+
+  if (error || !data) {
+    console.error("Chyba pri načítaní áut zo Supabase:", error);
+    return [];
+  }
+
+  // Prefiltrujeme a namapujeme záznamy bezpečne na strane kódu
+  return data
+    .map((dbCar) => {
+      // Vytvoríme si kópiu objektu, kde car_prices prefiltrujeme iba na zadaný market
+      const filteredPrices = dbCar.car_prices 
+        ? dbCar.car_prices.filter((p: any) => p.market === marketCode) 
+        : [];
+      
+      return mapDbCarToFrontend({
+        ...dbCar,
+        car_prices: filteredPrices
+      } as unknown as SupabaseCarResponse);
+    });
+}
+
+// Funkcia pre detail konkrétneho auta podľa jeho ID
+export async function getCarById(id: string, marketCode: string = "sk"): Promise<Car | undefined> {
+  const { data, error } = await supabase
+    .from("cars")
+    .select(`
+      *,
+      car_prices (*)
+    `)
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error(`Chyba pri načítaní auta s ID ${id}:`, error);
+    return undefined;
+  }
+
+  // Odfiltrujeme ceny pre konkrétny market
+  const filteredPrices = data.car_prices 
+    ? data.car_prices.filter((p: any) => p.market === marketCode) 
+    : [];
+
+  return mapDbCarToFrontend({
+    ...data,
+    car_prices: filteredPrices
+  } as unknown as SupabaseCarResponse);
 }

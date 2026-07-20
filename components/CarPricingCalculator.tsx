@@ -113,22 +113,6 @@ export function CarPricingCalculator({
       invalidRange: "Invalid date range",
       discountApplied: "Discount applied"
     },
-    bs: {
-      autoCalc: "Automatski obračun",
-      desc: "Cijena uključuje najam, odabrane lokacije i dodatne usluge.",
-      duration: "Period",
-      rate: "Cijena",
-      total: "Ukupno",
-      vatIncl: "Sa PDV-om",
-      limit: "Limit",
-      kmDay: "km/dan",
-      day1: "dan",
-      day24: "dana",
-      day5plus: "dana",
-      selectDates: "Odaberite termin za izračun cijene",
-      invalidRange: "Nevažeći raspon datuma",
-      discountApplied: "Popust"
-    }
   };
 
   const ui = uiData[lang as keyof typeof uiData] || uiData.sk;

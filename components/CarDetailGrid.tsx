@@ -87,7 +87,6 @@ export function CarDetailGrid({ car, power, zeroToHundred }: CarDetailGridProps)
               onChangeTo={setTo}
               onPickupChange={setPickupPrice}
               onReturnChange={setReturnPrice}
-              onSecondDriverChange={setHasSecondDriver}
               onPickupTimeChange={setPickupTime}
               onReturnTimeChange={setReturnTime}
               totalPrice={totalPrice}

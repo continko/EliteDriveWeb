@@ -1,15 +1,35 @@
 "use client";
 
-import { ChevronRight, Phone } from "lucide-react";
+import { useMemo, useEffect, useState } from "react";
+import { ChevronRight } from "lucide-react";
 import { CarCard } from "@/components/CarCard";
-import { cars } from "@/lib/cars";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
 import { useLang } from "@/context/LanguageContext";
+import { type Car } from "@/lib/cars";
+import { getCarsFromDatabase } from "@/lib/dbCars";
 
 export default function HomePage() {
-  const { t } = useLang();
-  const featuredCars = cars.slice(0, 3);
+  const { t, lang } = useLang();
+  
+  // 1. Stav pre načítané autá z databázy
+  const [cars, setCars] = useState<Car[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // 2. Načítanie dát zo Supabase po namontovaní komponentu (reaguje aj na zmenu jazyka/trhu)
+  useEffect(() => {
+    async function loadCars() {
+      setLoading(true);
+      // 'lang' z tvojho kontextu určí, či ťaháme ceny pre sk, hu, hr, me alebo ba
+      const dbCars = await getCarsFromDatabase(lang || "sk");
+      setCars(dbCars);
+      setLoading(false);
+    }
+    loadCars();
+  }, [lang]);
+
+  // 3. Výber prvých 3 áut do populárnej sekcie
+  const featuredCars = useMemo(() => cars.slice(0, 3), [cars]);
 
   return (
     <main className="relative min-h-screen bg-[#020617] selection:bg-sky-500/30 overflow-hidden">
@@ -60,11 +80,20 @@ export default function HomePage() {
             </p>
           </header>
 
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredCars.map((car) => (
-              <CarCard key={car.id} car={car} />
-            ))}
-          </div>
+          {/* Ak sa autá ešte načítavajú zo Supabase, zobrazíme decentný skelet alebo prázdny grid */}
+          {loading ? (
+            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="h-96 rounded-[2rem] border border-white/5 bg-slate-900/20 animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredCars.map((car) => (
+                <CarCard key={car.id} car={car} />
+              ))}
+            </div>
+          )}
 
           <div className="mt-16 text-center">
             <Link 

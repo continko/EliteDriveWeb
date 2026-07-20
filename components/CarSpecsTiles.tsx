@@ -1,6 +1,6 @@
 "use client";
 
-import { Fuel, Gauge, Settings2, Users, Zap, Calendar, Shovel } from "lucide-react";
+import { Fuel, Gauge, Settings2, Users, Zap, Calendar, Anchor } from "lucide-react";
 import type { Car } from "@/lib/cars";
 import { useLang } from "@/context/LanguageContext";
 
@@ -16,18 +16,18 @@ export function CarSpecsTiles({ car, power, zeroToHundred }: CarSpecsTilesProps)
   const SPEC_ITEMS = [
     { 
       key: "power", 
-      label: lang === 'sk' ? "Výkon" : lang === 'en' ? "Power" : "Snaga", 
+      label: lang === 'en' ? "Power" : "Výkon", 
       icon: Zap, 
       getValue: () => power ?? "" 
     },
     { 
       key: "fuel", 
-      label: lang === 'sk' ? "Palivo" : lang === 'en' ? "Fuel" : "Gorivo", 
+      label: lang === 'en' ? "Fuel" : "Palivo", 
       icon: Fuel, 
       getValue: () => {
         const fuelMap: Record<string, string> = {
-          "Benzín": lang === 'en' ? "Petrol" : "Benzin",
-          "Diesel": lang === 'en' ? "Diesel" : "Dizel",
+          "Benzín": lang === 'en' ? "Petrol" : "Benzín",
+          "Diesel": lang === 'en' ? "Diesel" : "Diesel",
           "Hybrid": "Hybrid",
           "Elektro": lang === 'en' ? "Electric" : "Elektro"
         };
@@ -36,54 +36,54 @@ export function CarSpecsTiles({ car, power, zeroToHundred }: CarSpecsTilesProps)
     },
     { 
       key: "transmission", 
-      label: lang === 'sk' ? "Prevodovka" : lang === 'en' ? "Transmission" : "Mjenjač", 
+      label: lang === 'en' ? "Transmission" : "Prevodovka", 
       icon: Settings2, 
-      getValue: () => lang === 'sk' ? "Automat" : lang === 'en' ? "Automatic" : "Automatik" 
+      getValue: () => lang === 'en' ? "Automatic" : "Automat" 
     },
     { 
       key: "drive", 
-      label: lang === 'sk' ? "Náhon" : lang === 'en' ? "Drive" : "Pogon", 
+      label: lang === 'en' ? "Drive" : "Náhon", 
       icon: Gauge, 
       getValue: () => car.drive 
     },
     { 
       key: "seats", 
-      label: lang === 'sk' ? "Sedadlá" : lang === 'en' ? "Seats" : "Sjedišta", 
+      label: lang === 'en' ? "Seats" : "Sedadlá", 
       icon: Users, 
       getValue: () => {
-        if (lang === 'sk') return `${car.seats} miest`;
         if (lang === 'en') return `${car.seats} seats`;
-        return `${car.seats} mjesta`;
+        return `${car.seats} miest`;
       }
     },
     { 
       key: "consumption", 
-      label: lang === 'sk' ? "Spotreba" : lang === 'en' ? "Consumption" : "Potrošnja", 
+      label: lang === 'en' ? "Consumption" : "Spotreba", 
       icon: Fuel, 
       getValue: () => car.consumption 
     },
     { 
       key: "year", 
-      label: lang === 'sk' ? "Rok výroby" : lang === 'en' ? "Year" : "Godište", 
+      label: lang === 'en' ? "Year" : "Rok výroby", 
       icon: Calendar, 
       getValue: () => String(car.year) 
     },
     { 
       key: "tow", 
-      label: lang === 'sk' ? "Ťažné" : lang === 'en' ? "Tow hitch" : "Kuka", 
-      icon: Shovel, 
+      label: lang === 'en' ? "Tow hitch" : "Ťažné", 
+      icon: Anchor, 
       getValue: () => {
-        if (car.tow) return lang === 'sk' ? "Áno" : lang === 'en' ? "Yes" : "Da";
-        return lang === 'sk' ? "Nie" : lang === 'en' ? "No" : "Ne";
+        if (car.tow) return lang === 'en' ? "Yes" : "Áno";
+        return lang === 'en' ? "No" : "Nie";
       }
     }
   ];
 
-  const ui = {
+  const uiTexts = {
     sk: { tag: "Technické", title: "Parametre vozidla" },
     en: { tag: "Technical", title: "Specifications" },
-    bs: { tag: "Tehnički", title: "Specifikacije" }
-  }[lang as 'sk' | 'en' | 'bs'];
+  };
+
+  const ui = uiTexts[lang as 'sk' | 'en'] || uiTexts.sk;
 
   return (
     <section className="space-y-8">

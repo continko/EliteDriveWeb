@@ -49,29 +49,4 @@ export const processTranslations = {
       }
     ]
   },
-  bs: {
-    title: "Put do ",
-    title_span: "vožnje",
-    subtitle: "Pojednostavili smo proces najma na minimum. Bez nepotrebne papirologije, samo čisto uživanje u vožnji.",
-    steps: [
-      { 
-        id: "01", 
-        title: "Odabir i rezervacija", 
-        desc: "Pregledajte naš vozni park i odaberite vozilo. Rezervaciju možete izvršiti online, putem WhatsApp-a ili telefonom. Potrebni su nam samo osnovni podaci.",
-        details: ["Važeća vozačka dozvola (B)", "Lična karta ili pasoš", "Minimalno 18 godina"]
-      },
-      { 
-        id: "02", 
-        title: "Ugovor i Depozit", 
-        desc: "Pripremićemo ugovor o najmu koji potpisujete prilikom preuzimanja. U ovom koraku se plaća najam i povratni depozit.",
-        details: ["Jasan ugovor bez skrivenih tačaka", "Transparentan depozit", "Kompletno osiguranje uključeno"]
-      },
-      { 
-        id: "03", 
-        title: "Preuzimanje ključeva", 
-        desc: "Vozilo ćemo vam dostaviti na dogovoreno mjesto (Trenčin, aerodrom ili vaš dom). Slijedi kratka instruktaža i spremni ste.",
-        details: ["Uvijek čisto vozilo", "Pun rezervoar", "Tehnička podrška 24/7"]
-      }
-    ]
-  }
 };

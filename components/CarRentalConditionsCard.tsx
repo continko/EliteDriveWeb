@@ -34,18 +34,7 @@ export function CarRentalConditionsCard({ car }: CarRentalConditionsCardProps) {
       licenseDesc: `Driving license holder for at least ${car.minLicenseYears} year${car.minLicenseYears > 1 ? "s" : ""}.`,
       info: "The vehicle is intended exclusively for normal road traffic. Racing, drifting, and extreme loading are prohibited."
     },
-    bs: {
-      rules: "Pravila",
-      title: "Uslovi najma",
-      ageLabel: "Minimalna starost",
-      ageValue: `${car.minAge} godina`,
-      ageDesc: `Vozač mora imati najmanje ${car.minAge} godina.`,
-      licenseLabel: "Iskustvo vozača",
-      licenseValue: `min. ${car.minLicenseYears} godin${car.minLicenseYears === 1 ? "u" : "e"}`,
-      licenseDesc: `Vlasnik vozačke dozvole najmanje ${car.minLicenseYears} godin${car.minLicenseYears === 1 ? "u" : "e"}.`,
-      info: "Vozilo je namijenjeno isključivo za uobičajeni cestovni saobraćaj. Zabranjena je vožnja na stazi, driftanje i ekstremno opterećenje."
-    }
-  }[lang as 'sk' | 'en' | 'bs'] || {};
+  }[lang as 'sk' | 'en' ] || {};
 
   return (
     <section className="relative overflow-hidden space-y-6 rounded-[3rem] border border-white/10 bg-slate-900/60 p-6 backdrop-blur-xl shadow-2xl sm:p-8">

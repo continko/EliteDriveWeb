@@ -14,6 +14,7 @@ const nextConfig = {
       { protocol: "https", hostname: "cdn.motor1.com" },
       { protocol: "https", hostname: "www.abt-america.com" },
       { protocol: "https", hostname: "cdn.elferspot.com" },
+      { protocol: "https", hostname: "www.thecarexpert.co.uk" },
     ],
   },
   async headers() {

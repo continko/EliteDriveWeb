@@ -21,7 +21,6 @@ export function CarIncludedSection() {
       desc: { 
         sk: "Všetky vozidlá sú pravidelne servisované v autorizovaných servisoch.", 
         en: "All vehicles are regularly serviced in authorized centers.",
-        bs: "Sva vozila se redovno servisiraju u ovlaštenim centrima."
       }
     },
     {
@@ -30,7 +29,6 @@ export function CarIncludedSection() {
       desc: { 
         sk: "Bezplatná zmena termínu až 48 hodín pred začiatkom prenájmu.", 
         en: "Free change of date up to 48 hours before the rental starts.",
-        bs: "Besplatna promjena termina do 48 sati prije početka najma."
       }
     },
     {
@@ -39,7 +37,6 @@ export function CarIncludedSection() {
       desc: { 
         sk: "Slovenská diaľničná známka je automaticky zahrnutá v cene.", 
         en: "Slovak highway toll is automatically included in the price.",
-        bs: "Slovačka vinjeta je automatski uključena u cijenu."
       }
     },
     {
@@ -48,7 +45,6 @@ export function CarIncludedSection() {
       desc: { 
         sk: "Havarijné aj zákonné poistenie (PZP) je súčasťou prenájmu.", 
         en: "Collision damage waiver and liability insurance included.",
-        bs: "Kasko i obavezno osiguranje su uključeni u cijenu."
       }
     },
     {
@@ -57,7 +53,6 @@ export function CarIncludedSection() {
       desc: { 
         sk: "Okamžité riešenie problémov a odtahová služba v rámci EU.", 
         en: "Immediate problem solving and towing service within the EU.",
-        bs: "Hitno rješavanje problema i šlep služba unutar EU."
       }
     },
     {
@@ -66,7 +61,6 @@ export function CarIncludedSection() {
       desc: { 
         sk: "Osobný prístup a technická podpora počas celej doby nájmu.", 
         en: "Personal approach and technical support throughout the rental.",
-        bs: "Lični pristup i tehnička podrška tokom cijelog najma."
       }
     }
   ];
@@ -75,7 +69,7 @@ export function CarIncludedSection() {
     sk: { top: "Elite Services", title: "V cene je zahrnuté" },
     en: { top: "Elite Services", title: "Included in price" },
     bs: { top: "Elite Services", title: "Uključeno u cijenu" }
-  }[lang as 'sk' | 'en' | 'bs'] || { top: "Elite Services", title: "V cene je zahrnuté" };
+  }[lang as 'sk' | 'en' ] || { top: "Elite Services", title: "V cene je zahrnuté" };
 
   return (
     <section className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-slate-900/60 p-8 backdrop-blur-xl shadow-2xl">
@@ -104,10 +98,10 @@ export function CarIncludedSection() {
 
               <div className="space-y-2">
                 <h3 className="text-xs font-black uppercase tracking-widest text-slate-100 group-hover:text-white transition-colors">
-                  {item.title[lang as 'sk' | 'en' | 'bs'] || item.title.sk}
+                  {item.title[lang as 'sk' | 'en' ] || item.title.sk}
                 </h3>
                 <p className="text-[11px] leading-relaxed text-slate-500 group-hover:text-slate-300 transition-colors">
-                  {item.desc[lang as 'sk' | 'en' | 'bs'] || item.desc.sk}
+                  {item.desc[lang as 'sk' | 'en' ] || item.desc.sk}
                 </p>
               </div>
 

@@ -1,12 +1,29 @@
 "use client";
 
-import { cars } from "@/lib/cars";
+import { useEffect, useState } from "react";
+import { type Car } from "@/lib/cars";
+import { getCarsFromDatabase } from "@/lib/dbCars";
 import { CarCard } from "@/components/CarCard";
 import { CarFront, Filter } from "lucide-react";
 import { useLang } from "@/context/LanguageContext";
 
 export default function FlotilaPage() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+
+  // 1. Stav pre načítané autá zo Supabase a stav loading
+  const [cars, setCars] = useState<Car[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // 2. Načítanie dát z DB reagujúce na zmenu jazyka/trhu
+  useEffect(() => {
+    async function loadFlotila() {
+      setLoading(true);
+      const dbCars = await getCarsFromDatabase(lang || "sk");
+      setCars(dbCars);
+      setLoading(false);
+    }
+    loadFlotila();
+  }, [lang]);
 
   return (
     <main className="relative min-h-screen bg-[#020617] pt-40 pb-24 overflow-hidden">
@@ -51,14 +68,25 @@ export default function FlotilaPage() {
           </button>
         </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {cars.map((car) => (
-            <div key={car.id} className="group transition-all duration-500 hover:-translate-y-2">
-               <CarCard car={car} />
-            </div>
-          ))}
-        </div>
+        {/* GRID – UPRAVENÝ pre loading animáciu */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <div 
+                key={n} 
+                className="h-[420px] w-full rounded-[2.5rem] border border-white/5 bg-slate-900/20 animate-pulse" 
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {cars.map((car) => (
+              <div key={car.id} className="group transition-all duration-500 hover:-translate-y-2">
+                 <CarCard car={car} />
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* FAQ LINK */}
         <div className="mt-32 rounded-[3.5rem] border border-white/5 bg-white/[0.01] p-12 text-center backdrop-blur-sm">

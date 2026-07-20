@@ -5,14 +5,14 @@ import { translations } from '@/lib/translations';
 const LanguageContext = createContext<any>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<'sk' | 'en' | 'bs'>('sk');
+  const [lang, setLang] = useState<'sk' | 'en'>('sk');
 
   useEffect(() => {
     const savedLang = localStorage.getItem('lang') as any;
     if (savedLang) setLang(savedLang);
   }, []);
 
-  const changeLang = (newLang: 'sk' | 'en' | 'bs') => {
+  const changeLang = (newLang: 'sk' | 'en' ) => {
     setLang(newLang);
     localStorage.setItem('lang', newLang);
   };
