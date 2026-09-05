@@ -414,10 +414,10 @@ export default function CheckoutPage() {
                 <div className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300">
                   <div className="flex items-center gap-3"><Building2 className="text-sky-500" size={24} /><h3 className="text-xl font-black italic uppercase tracking-tight">{ui.company}</h3></div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormInput name="compIco" placeholder={ui.placeholders.compIco} value={formData.compIco} onChange={handleInputChange} isLoading={isLoadingFinstat} />
-                    <FormInput name="compName" placeholder={ui.placeholders.compName} value={formData.compName} onChange={handleInputChange} />
-                    <FormInput name="compDic" placeholder={ui.placeholders.compDic} value={formData.compDic} onChange={handleInputChange} />
-                    <FormInput name="compIcdph" placeholder={ui.placeholders.compIcdph} value={formData.compIcdph} onChange={handleInputChange} />
+                    <FormInput name="compIco" placeholder={ui.placeholders.compIco} value={formData.compIco || ""} ... />
+                    <FormInput name="compName" placeholder={ui.placeholders.compName} value={formData.compName || ""} ... />
+                    <FormInput name="compDic" placeholder={ui.placeholders.compDic} value={formData.compDic || ""} ... />
+                    <FormInput name="compIcdph" placeholder={ui.placeholders.compIcdph} value={formData.compIcdph || ""} ... />
                   </div>
                 </div>
               )}
@@ -425,18 +425,18 @@ export default function CheckoutPage() {
               <div className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-8 space-y-6">
                 <div className="flex items-center gap-3"><MapPin className="text-sky-500" size={24} /><h3 className="text-xl font-black italic uppercase tracking-tight">{ui.address}</h3></div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormInput className="md:col-span-2" name="street" placeholder={ui.placeholders.street} value={formData.street} onChange={handleInputChange} />
-                  <FormInput name="zip" placeholder={ui.placeholders.zip} value={formData.zip} onChange={handleInputChange} />
-                  <FormInput className="md:col-span-3" name="city" placeholder={ui.placeholders.city} value={formData.city} onChange={handleInputChange} />
+                  <FormInput className="md:col-span-2" name="street" placeholder={ui.placeholders.street} value={formData.street || ""} onChange={handleInputChange} />
+                  <FormInput name="zip" placeholder={ui.placeholders.zip} value={formData.zip || ""} onChange={handleInputChange} />
+                  <FormInput className="md:col-span-3" name="city" placeholder={ui.placeholders.city} value={formData.city || ""} onChange={handleInputChange} />
                 </div>
               </div>
 
               <div className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-8 space-y-6">
                 <div className="flex items-center gap-3"><FileText className="text-sky-500" size={24} /><h3 className="text-xl font-black italic uppercase tracking-tight">{ui.docs}</h3></div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormInput name="opNumber" placeholder={ui.placeholders.opNumber} value={formData.opNumber} onChange={handleInputChange} />
-                  <FormInput name="vpNumber" placeholder={ui.placeholders.vpNumber} value={formData.vpNumber} onChange={handleInputChange} />
-                  <FormInput name="birthNumber" placeholder={ui.placeholders.birthNumber} value={formData.birthNumber} onChange={handleInputChange} />
+                  <FormInput name="opNumber" placeholder={ui.placeholders.opNumber} value={formData.opNumber || ""} onChange={handleInputChange} />
+                  <FormInput name="vpNumber" placeholder={ui.placeholders.vpNumber} value={formData.vpNumber || ""} onChange={handleInputChange} />
+                  <FormInput name="birthNumber" placeholder={ui.placeholders.birthNumber} value={formData.birthNumber || ""} onChange={handleInputChange} />
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
