@@ -8,9 +8,9 @@ import { toast } from 'react-hot-toast';
 
 const FormInput = ({ name, value, onChange, placeholder, type = "text", className = "", isLoading = false }: { 
   name: string, 
-  value: string, 
+  value: string | undefined, 
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, 
-  placeholder: string, 
+  placeholder: string | undefined, 
   type?: string,
   className?: string,
   isLoading?: boolean
@@ -19,9 +19,9 @@ const FormInput = ({ name, value, onChange, placeholder, type = "text", classNam
     <input
       type={type}
       name={name}
-      value={value}
+      value={value || ""}
       onChange={onChange}
-      placeholder={placeholder}
+      placeholder={placeholder || ""}
       className={`w-full bg-slate-950 border border-white/10 rounded-xl p-3.5 text-sm outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500/20 transition-all text-white placeholder:text-slate-600`}
     />
     {isLoading && (
@@ -49,12 +49,11 @@ export default function CheckoutPage() {
   const [opFile, setOpFile] = useState<File | null>(null);
   const [vpFile, setVpFile] = useState<File | null>(null);
 
-  // Stavy pre modálne okná
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [completedReservationData, setCompletedReservationData] = useState<any>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Record<string, string>>({
     firstName: '', lastName: '', email: '', phone: '',
     street: '', city: '', zip: '',
     compName: '', compIco: '', compDic: '', compIcdph: '',
@@ -147,7 +146,7 @@ export default function CheckoutPage() {
   const validateForm = () => {
     const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'street', 'city', 'zip', 'opNumber', 'vpNumber', 'birthNumber'];
     if (isCompany) requiredFields.push('compIco', 'compName');
-    const missing = requiredFields.find(field => !formData[field as keyof typeof formData]);
+    const missing = requiredFields.find(field => !formData[field]);
     if (missing) {
       toast.error(`${ui.fillField}: ${ui.labels[missing as keyof typeof ui.labels] || missing}`);
       return false;
@@ -164,7 +163,6 @@ export default function CheckoutPage() {
     const loadingToast = toast.loading(ui.submitting);
     setIsSubmitting(true);
     
-    // --- SEM PRIDAJ TENTO RIADOK NA GENEROVANIE VS ---
     const generatedVS = Math.floor(100000 + Math.random() * 900000).toString();
 
     const payload = { 
@@ -175,7 +173,7 @@ export default function CheckoutPage() {
       extras: { insuranceType, useFlexiDeposit, hasSecondDriver }, 
       finalPrice, 
       displayDeposit,
-      variableSymbol: generatedVS, // <--- PRIDANÉ DO PAYLOADU (odošle sa na API/backend)
+      variableSymbol: generatedVS,
       hasOpFile: !!opFile,
       hasVpFile: !!vpFile
     };
@@ -185,7 +183,7 @@ export default function CheckoutPage() {
       if (response.ok) {
         toast.dismiss(loadingToast);
         setCompletedReservationData({
-          variableSymbol: generatedVS, // <--- TU SA POUŽIJE RONAKÝ VS PRE MODÁLNE OKNO
+          variableSymbol: generatedVS,
           finalPrice,
           paymentMethod
         });
@@ -216,18 +214,16 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-[#020617] text-white pt-24 pb-28 md:pb-12 px-4 md:px-8 relative">
       
-      {/* WHATSAPP FLOAT BUTTON */}
       <a 
         href="https://wa.me/421900000000" 
         target="_blank" 
         rel="noopener noreferrer" 
         className="fixed bottom-20 md:bottom-6 right-6 z-40 bg-emerald-500 text-slate-950 p-4 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center gap-2 font-black uppercase text-xs"
-        title="Potrebujete poradit? Napíšte nám na WhatsApp"
+        title="Potrebujete poradiť? Napíšte nám na WhatsApp"
       >
         <MessageCircle size={24} />
       </a>
 
-      {/* MODAL OKNO PRE DEPOZIT */}
       {showDepositModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-white/10 rounded-[2.5rem] p-8 max-w-md w-full relative space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
@@ -246,7 +242,6 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      {/* SUCCESS MODAL PO ÚSPEŠNEJ REZERVÁCII S REÁLNYMI ÚDAJMI */}
       {isSuccessModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-white/10 rounded-[2.5rem] p-8 max-w-lg w-full relative space-y-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
@@ -259,7 +254,6 @@ export default function CheckoutPage() {
               <p className="text-xs text-slate-400">Potvrdenie a detailné pokyny sme vám odoslali na email ({formData.email}).</p>
             </div>
 
-            {/* AK ZVOLIL PREVOD - TU SI UPRAV TVOJ REÁLNY IBAN */}
             {completedReservationData?.paymentMethod === 'transfer' && (
               <div className="bg-slate-950 p-6 rounded-2xl border border-white/5 space-y-3">
                 <h4 className="text-xs font-black uppercase text-sky-400 tracking-wider">Údaje pre bankový prevod</h4>
@@ -282,7 +276,6 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {/* AK ZVOLIL CRYPTO - TU SI UPRAV TVOJU REÁLNU CRYPTO ADRESU */}
             {completedReservationData?.paymentMethod === 'crypto' && (
               <div className="bg-slate-950 p-6 rounded-2xl border border-white/5 space-y-4">
                 <h4 className="text-xs font-black uppercase text-emerald-400 tracking-wider">Platba v kryptomene (USDC / USDT)</h4>
@@ -299,7 +292,6 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {/* AK ZVOLIL KARTOU ALEBO HOTOVOSŤ */}
             {(completedReservationData?.paymentMethod === 'card' || completedReservationData?.paymentMethod === 'cash') && (
               <div className="bg-slate-950 p-6 rounded-2xl border border-white/5 text-center space-y-2">
                 <p className="text-xs text-slate-300">Platba prebehne pri preberaní vozidla, prípadne vás budeme kontaktovať pre dokončenie.</p>
@@ -320,19 +312,16 @@ export default function CheckoutPage() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         <div className="lg:col-span-8 space-y-6">
-          {/* Progress bar */}
           <div className="flex gap-3 mb-8">
             {[1, 2, 3].map(i => (
               <div key={i} className={`h-1.5 flex-1 rounded-full transition-all duration-700 ${step >= i ? 'bg-sky-500' : 'bg-white/10'}`} />
             ))}
           </div>
 
-          {/* STEP 2 - INSURANCE */}
           {step === 2 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-500">
               <h2 className="text-4xl font-black italic uppercase tracking-tighter text-sky-400">{ui.step2}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* BASIC */}
                 <div onClick={() => setInsuranceType('basic')} 
                   className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer relative overflow-hidden ${insuranceType === 'basic' ? "border-sky-500 bg-sky-500/5" : "border-white/5 bg-slate-900/40"}`}>
                   <div className="flex justify-between items-start mb-4">
@@ -347,7 +336,6 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* STANDARD */}
                 <div onClick={() => setInsuranceType('standard')} 
                   className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer relative overflow-hidden ${insuranceType === 'standard' ? "border-sky-500 bg-sky-500/5 shadow-lg shadow-sky-500/10" : "border-white/5 bg-slate-900/40"}`}>
                   <div className="flex justify-between items-start mb-4">
@@ -363,7 +351,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Flexi Deposit Toggle */}
               <div onClick={() => setUseFlexiDeposit(!useFlexiDeposit)} 
                 className={`p-8 rounded-[3rem] border-2 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-center gap-6 ${useFlexiDeposit ? "border-emerald-500 bg-emerald-500/5" : "border-white/5 bg-slate-900/20"}`}>
                 <div className="flex items-center gap-6">
@@ -392,7 +379,6 @@ export default function CheckoutPage() {
             </div>
           )}
 
-          {/* STEP 3 - DATA */}
           {step === 3 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-500 pb-10">
               <div className="flex bg-slate-900/50 p-1.5 rounded-2xl border border-white/5">
@@ -414,10 +400,10 @@ export default function CheckoutPage() {
                 <div className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300">
                   <div className="flex items-center gap-3"><Building2 className="text-sky-500" size={24} /><h3 className="text-xl font-black italic uppercase tracking-tight">{ui.company}</h3></div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormInput name="compIco" placeholder={ui.placeholders.compIco} value={formData.compIco || ""} ... />
-                    <FormInput name="compName" placeholder={ui.placeholders.compName} value={formData.compName || ""} ... />
-                    <FormInput name="compDic" placeholder={ui.placeholders.compDic} value={formData.compDic || ""} ... />
-                    <FormInput name="compIcdph" placeholder={ui.placeholders.compIcdph} value={formData.compIcdph || ""} ... />
+                    <FormInput name="compIco" placeholder={ui.placeholders.compIco} value={formData.compIco} onChange={handleInputChange} isLoading={isLoadingFinstat} />
+                    <FormInput name="compName" placeholder={ui.placeholders.compName} value={formData.compName} onChange={handleInputChange} />
+                    <FormInput name="compDic" placeholder={ui.placeholders.compDic} value={formData.compDic} onChange={handleInputChange} />
+                    <FormInput name="compIcdph" placeholder={ui.placeholders.compIcdph} value={formData.compIcdph} onChange={handleInputChange} />
                   </div>
                 </div>
               )}
@@ -425,18 +411,18 @@ export default function CheckoutPage() {
               <div className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-8 space-y-6">
                 <div className="flex items-center gap-3"><MapPin className="text-sky-500" size={24} /><h3 className="text-xl font-black italic uppercase tracking-tight">{ui.address}</h3></div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormInput className="md:col-span-2" name="street" placeholder={ui.placeholders.street} value={formData.street || ""} onChange={handleInputChange} />
-                  <FormInput name="zip" placeholder={ui.placeholders.zip} value={formData.zip || ""} onChange={handleInputChange} />
-                  <FormInput className="md:col-span-3" name="city" placeholder={ui.placeholders.city} value={formData.city || ""} onChange={handleInputChange} />
+                  <FormInput className="md:col-span-2" name="street" placeholder={ui.placeholders.street} value={formData.street} onChange={handleInputChange} />
+                  <FormInput name="zip" placeholder={ui.placeholders.zip} value={formData.zip} onChange={handleInputChange} />
+                  <FormInput className="md:col-span-3" name="city" placeholder={ui.placeholders.city} value={formData.city} onChange={handleInputChange} />
                 </div>
               </div>
 
               <div className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-8 space-y-6">
                 <div className="flex items-center gap-3"><FileText className="text-sky-500" size={24} /><h3 className="text-xl font-black italic uppercase tracking-tight">{ui.docs}</h3></div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormInput name="opNumber" placeholder={ui.placeholders.opNumber} value={formData.opNumber || ""} onChange={handleInputChange} />
-                  <FormInput name="vpNumber" placeholder={ui.placeholders.vpNumber} value={formData.vpNumber || ""} onChange={handleInputChange} />
-                  <FormInput name="birthNumber" placeholder={ui.placeholders.birthNumber} value={formData.birthNumber || ""} onChange={handleInputChange} />
+                  <FormInput name="opNumber" placeholder={ui.placeholders.opNumber} value={formData.opNumber} onChange={handleInputChange} />
+                  <FormInput name="vpNumber" placeholder={ui.placeholders.vpNumber} value={formData.vpNumber} onChange={handleInputChange} />
+                  <FormInput name="birthNumber" placeholder={ui.placeholders.birthNumber} value={formData.birthNumber} onChange={handleInputChange} />
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
@@ -498,7 +484,6 @@ export default function CheckoutPage() {
           )}
         </div>
 
-        {/* SIDEBAR SUMÁR */}
         <div className="lg:col-span-4">
           <div className="sticky top-28 bg-slate-900 border border-white/10 rounded-[3rem] p-8 space-y-6 shadow-2xl">
             <img src={res.image} alt={res.name} className="w-full aspect-video object-contain bg-slate-950 rounded-[2rem] p-4 border border-white/5" />
@@ -519,7 +504,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Detaily prenájmu */}
               <div className="space-y-3 p-5 rounded-[2rem] bg-white/5 border border-white/5">
                 <div className="flex gap-3 items-start border-b border-white/5 pb-3">
                   <div className="p-1.5 bg-sky-500/20 rounded-lg text-sky-500"><MapPin size={14} /></div>
@@ -577,7 +561,6 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* STICKY MOBILE BOTTOM BAR */}
       <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-white/10 p-4 flex items-center justify-between lg:hidden z-30 shadow-2xl">
         <div>
           <span className="text-[10px] text-slate-400 uppercase font-bold block">{ui.total} ({ui.vat})</span>
