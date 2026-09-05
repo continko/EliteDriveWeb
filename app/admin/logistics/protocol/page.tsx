@@ -8,6 +8,19 @@ import {
 import { toast } from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 
+// Definícia rozhrania pre auto a jeho detaily
+interface CarDetail {
+  license_plate?: string | null;
+  mileage?: number | string | null;
+}
+
+interface Car {
+  id: string;
+  brand: string;
+  name: string;
+  car_details?: CarDetail | CarDetail[] | null;
+}
+
 export default function VehicleProtocolPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -17,7 +30,7 @@ export default function VehicleProtocolPage() {
   const bookingIdFromUrl = searchParams.get("bookingId") || "";
 
   const [loading, setLoading] = useState(false);
-  const [cars, setCars] = useState<any[]>([]);
+  const [cars, setCars] = useState<Car[]>([]);
   
   const [selectedCarId, setSelectedCarId] = useState(carIdFromUrl);
   const [protocolType, setProtocolType] = useState<"CHECK_OUT" | "CHECK_IN">("CHECK_OUT");
@@ -37,7 +50,6 @@ export default function VehicleProtocolPage() {
   useEffect(() => {
     async function fetchCars() {
       try {
-        // UPRAVENÉ: Spájame tabuľku cars s tabuľkou car_details podľa tvojho DB schémy
         const { data, error } = await supabase
           .from("cars")
           .select(`
@@ -59,9 +71,12 @@ export default function VehicleProtocolPage() {
           // Ak bolo ID auta v URL, nastavíme ho a skúsime predvyplniť tachometer
           if (carIdFromUrl) {
             setSelectedCarId(carIdFromUrl);
-            const preselectedCar = data.find((c: any) => c.id === carIdFromUrl);
-            const details = preselectedCar?.car_details?.[0] || preselectedCar?.car_details;
-            if (details?.mileage) {
+            const preselectedCar = data.find((c) => c.id === carIdFromUrl);
+            const details = Array.isArray(preselectedCar?.car_details) 
+              ? preselectedCar?.car_details[0] 
+              : preselectedCar?.car_details;
+              
+            if (details && typeof details === 'object' && 'mileage' in details && details.mileage) {
               setMileage(details.mileage.toString());
             }
           }
@@ -175,8 +190,11 @@ export default function VehicleProtocolPage() {
 
                   // Automatické predvyplnenie tachometra z car_details pri zmene auta
                   const chosenCar = cars.find(c => c.id === carId);
-                  const details = chosenCar?.car_details?.[0] || chosenCar?.car_details;
-                  if (details?.mileage) {
+                  const details = Array.isArray(chosenCar?.car_details) 
+                    ? chosenCar?.car_details[0] 
+                    : chosenCar?.car_details;
+                    
+                  if (details && typeof details === 'object' && 'mileage' in details && details.mileage) {
                     setMileage(details.mileage.toString());
                   }
                 }}
@@ -185,7 +203,7 @@ export default function VehicleProtocolPage() {
               >
                 <option value="">-- Vyberte vozidlo z flotily --</option>
                 {cars.map(car => {
-                  const details = car.car_details?.[0] || car.car_details;
+                  const details = Array.isArray(car.car_details) ? car.car_details[0] : car.car_details;
                   const plate = details?.license_plate || "Bez ŠPZ";
 
                   return (
