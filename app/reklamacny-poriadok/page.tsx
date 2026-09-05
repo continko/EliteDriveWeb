@@ -9,7 +9,7 @@ export default function ReklamacnyPoriadok() {
       <nav className="sticky top-0 z-50 w-full h-20 border-b border-white/5 bg-[#020512]/95 backdrop-blur-xl px-6 md:px-12 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           <ArrowLeft className="w-4 h-4 text-sky-500 group-hover:-translate-x-1 transition-transform" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-white transition-colors">EliteDrive Base</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-white transition-colors">UltimateDrive Base</span>
         </Link>
         <div className="flex items-center gap-3">
           <Scale className="w-4 h-4 text-sky-500" />
@@ -36,8 +36,8 @@ export default function ReklamacnyPoriadok() {
               <span className="text-sky-500">I.</span> Úvodné ustanovenia
             </h2>
             <div className="space-y-4 border-l border-white/10 pl-8 italic">
-              <p>1.1. Spoločnosť <span className="text-white font-bold">EliteDrive s. r. o.</span>, so sídlom [DOPLŇ SÍDLO], IČO: [DOPLŇ], (ďalej len „Prenajímateľ“), vydáva tento Reklamačný poriadok, ktorý upravuje podmienky a postup pri uplatňovaní práv zo zodpovednosti za vady služieb (ďalej len „reklamácia“).</p>
-              <p>1.2. Tento Reklamačný poriadok je zverejnený v sídle Prenajímateľa a na webovom sídle www.elitedrive.sk.</p>
+              <p>1.1. Spoločnosť <span className="text-white font-bold">UltimateDrive s. r. o.</span>, so sídlom [DOPLŇ SÍDLO], IČO: [DOPLŇ], (ďalej len „Prenajímateľ“), vydáva tento Reklamačný poriadok, ktorý upravuje podmienky a postup pri uplatňovaní práv zo zodpovednosti za vady služieb (ďalej len „reklamácia“).</p>
+              <p>1.2. Tento Reklamačný poriadok je zverejnený v sídle Prenajímateľa a na webovom sídle www.ultimatedrive.sk.</p>
               <p>1.3. Zákazníkom sa na účely tohto poriadku rozumie každá fyzická alebo právnická osoba, ktorej Prenajímateľ poskytuje služby na základe Nájomnej zmluvy.</p>
             </div>
           </section>
@@ -60,7 +60,7 @@ export default function ReklamacnyPoriadok() {
               <p>3.1. Nájomca je povinný uplatniť reklamáciu <span className="text-white font-bold">bezodkladne</span> po tom, čo vadu zistil, najneskôr však do konca doby nájmu, ak ide o vady technického stavu vozidla.</p>
               <p>3.2. Reklamáciu je možné uplatniť:
                 <br />• <span className="text-white">Písomne</span> na adresu sídla Prenajímateľa.
-                <br />• <span className="text-white">E-mailom</span> na adresu: info@elitedrive.sk.
+                <br />• <span className="text-white">E-mailom</span> na adresu: info@ultimatedrive.sk.
               </p>
               <p>3.3. Pri reklamácii je Nájomca povinný predložiť Nájomnú zmluvu, odovzdávací protokol a presne špecifikovať, v čom vada spočíva a aké právo si uplatňuje.</p>
             </div>
@@ -109,7 +109,7 @@ export default function ReklamacnyPoriadok() {
               <p className="text-sm font-bold opacity-80">Náš tím podpory je tu, aby vyriešil akýkoľvek problém s vaším prenájmom.</p>
             </div>
             <div className="flex gap-4">
-              <a href="mailto:info@elitedrive.sk" className="p-4 bg-black text-white rounded-full hover:scale-110 transition-transform">
+              <a href="mailto:info@ultimatedrive.sk" className="p-4 bg-black text-white rounded-full hover:scale-110 transition-transform">
                 <Mail className="w-6 h-6" />
               </a>
               <a href="tel:+421000000" className="p-4 bg-black text-white rounded-full hover:scale-110 transition-transform">
@@ -123,7 +123,7 @@ export default function ReklamacnyPoriadok() {
 
       <footer className="mt-40 py-10 text-center border-t border-white/5 italic">
         <p className="text-[9px] text-slate-700 font-black uppercase tracking-[0.5em] italic">
-          EliteDrive s.r.o. &copy; 2026 Legal Infrastructure
+          UltimateDrive s.r.o. &copy; 2026 Legal Infrastructure
         </p>
       </footer>
     </main>

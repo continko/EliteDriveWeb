@@ -3,18 +3,19 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { 
-  FileText, Receipt, ArrowDownToLine,
-  CheckCircle2, Loader2, Upload as UploadIcon,
-  Landmark, Fuel, Wrench, MoreHorizontal, Calendar
+  FileText, ArrowDownToLine,
+  Loader2, Upload as UploadIcon,
+  Landmark, Fuel, Wrench, MoreHorizontal, Calendar, Trash2
 } from "lucide-react";
-import JSZip from "jszip"; // Importujeme knižnicu
+import { toast } from "react-hot-toast";
+import JSZip from "jszip";
 
 export default function RevenuePage() {
   const [allDocuments, setAllDocuments] = useState<any[]>([]);
   const [filteredDocs, setFilteredDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [zipping, setZipping] = useState(false); // State pre sťahovanie ZIPu
+  const [zipping, setZipping] = useState(false);
   
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().substring(0, 7));
   const [activeCategory, setActiveCategory] = useState("PHM");
@@ -40,7 +41,11 @@ export default function RevenuePage() {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (!error && data) setAllDocuments(data);
+    if (error) {
+      toast.error("Chyba pri načítavaní dokumentov");
+    } else if (data) {
+      setAllDocuments(data);
+    }
     setLoading(false);
   }
 
@@ -64,7 +69,6 @@ export default function RevenuePage() {
       const downloadPromises = filteredDocs.map(async (doc) => {
         const response = await fetch(doc.file_url);
         const blob = await response.blob();
-        // Pridáme súbor do ZIPu (Kategória_Názov)
         zip.file(`${doc.category}_${doc.name}`, blob);
       });
 
@@ -75,11 +79,25 @@ export default function RevenuePage() {
       link.href = URL.createObjectURL(content);
       link.download = `Podklady_${selectedMonth}.zip`;
       link.click();
+      toast.success("ZIP archív bol úspešne stiahnutý");
     } catch (error) {
       console.error("Chyba pri vytváraní ZIP:", error);
-      alert("Nepodarilo sa vytvoriť ZIP súbor.");
+      toast.error("Nepodarilo sa vytvoriť ZIP súbor.");
     } finally {
       setZipping(false);
+    }
+  };
+
+  // --- VYMAZANIE DOKUMENTU ---
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Naozaj chcete vymazať dokument ${name}?`)) return;
+
+    const { error } = await supabase.from('documents').delete().eq('id', id);
+    if (error) {
+      toast.error("Chyba pri mazaní: " + error.message);
+    } else {
+      toast.success("Dokument bol vymazaný");
+      fetchDocuments();
     }
   };
 
@@ -114,37 +132,39 @@ export default function RevenuePage() {
         }]);
 
       if (dbError) throw dbError;
+      toast.success("Dokument úspešne pridaný");
       await fetchDocuments();
 
     } catch (error: any) {
-      alert("Chyba: " + error.message);
+      toast.error("Chyba: " + error.message);
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <div className="space-y-10 pb-20 text-left font-urbanist text-white">
+    <div className="space-y-8 pb-20 text-left font-urbanist text-white max-w-6xl mx-auto">
       
-      {/* HEADER + UPLOAD UI */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-8">
-        <div className="space-y-8">
+      {/* HLAVIČKA A VÝBER OBDOBIA */}
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 border-b border-white/5 pb-8">
+        <div className="space-y-4">
           <div>
-            <p className="text-[10px] font-black text-sky-500 uppercase tracking-[0.3em] mb-2">Accounting Hub</p>
-            <h1 className="text-5xl font-black italic tracking-tighter uppercase">Podklady</h1>
+            <p className="text-[10px] font-black text-sky-400 uppercase tracking-[0.3em] mb-1">Accounting Hub</p>
+            <h1 className="text-3xl font-black italic uppercase tracking-wider text-white">Účtovné Podklady</h1>
+            <p className="text-xs text-slate-400 mt-1">Správa bločkov, faktúr a výpisov pre účtovníctvo</p>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest ml-1">Účtovné obdobie:</p>
-            <div className="flex flex-wrap gap-2 p-1.5 bg-slate-900/60 rounded-2xl border border-white/5 w-fit backdrop-blur-md">
+          <div className="flex flex-col gap-2 pt-2">
+            <p className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Účtovné obdobie:</p>
+            <div className="flex flex-wrap gap-2 p-1.5 bg-slate-900/50 rounded-2xl border border-white/5 w-fit backdrop-blur-md">
               {lastMonths.map((m) => (
                 <button
                   key={m}
                   onClick={() => setSelectedMonth(m)}
-                  className={`px-5 py-2 rounded-xl text-[10px] font-black transition-all ${
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
                     selectedMonth === m 
                     ? "bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20 scale-105" 
-                    : "text-slate-500 hover:text-white hover:bg-white/5"
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
                   }`}
                 >
                   {m}
@@ -154,14 +174,15 @@ export default function RevenuePage() {
           </div>
         </div>
 
-        <div className="bg-slate-900/50 p-3 rounded-[2.5rem] border border-white/5 backdrop-blur-md flex flex-col gap-4 min-w-[340px]">
+        {/* PANEL PRE NAHRÁVANIE */}
+        <div className="bg-slate-900/40 p-4 rounded-[2.5rem] border border-white/5 backdrop-blur-xl flex flex-col gap-4 min-w-[320px]">
           <div className="grid grid-cols-2 gap-1.5">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-[10px] font-black transition-all ${
-                  activeCategory === cat.id ? "bg-sky-500 text-slate-950 shadow-sky-500/20 shadow-lg" : "text-slate-400 hover:text-white bg-white/5"
+                className={`flex items-center gap-2 px-3.5 py-3 rounded-2xl text-[10px] font-black transition-all ${
+                  activeCategory === cat.id ? "bg-sky-500 text-slate-950 shadow-sky-500/20 shadow-lg" : "text-slate-400 hover:text-white bg-white/5 border border-white/5"
                 }`}
               >
                 {cat.icon} {cat.label}
@@ -169,7 +190,7 @@ export default function RevenuePage() {
             ))}
           </div>
 
-          <label className="flex items-center justify-center gap-3 px-6 py-5 bg-white text-slate-950 rounded-[1.5rem] text-[11px] font-black uppercase hover:bg-sky-400 transition-all cursor-pointer">
+          <label className="flex items-center justify-center gap-2 px-6 py-4 bg-white text-slate-950 rounded-2xl text-xs font-black uppercase tracking-wider hover:bg-sky-400 transition-all cursor-pointer shadow-lg shadow-white/5">
             {uploading ? <Loader2 className="animate-spin" size={16} /> : <UploadIcon size={16} />}
             {uploading ? "Nahrávam..." : `Nahrať pre: ${activeCategory}`}
             <input type="file" onChange={handleUpload} disabled={uploading} accept="image/*,application/pdf" className="hidden" />
@@ -178,69 +199,74 @@ export default function RevenuePage() {
       </div>
 
       {/* ZOZNAM DOKUMENTOV */}
-      <div className="p-8 rounded-[3rem] border border-white/5 bg-slate-900/40 backdrop-blur-xl relative">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 px-4">
-          <h3 className="text-[10px] font-black uppercase text-slate-500 flex items-center gap-2 tracking-widest">
-            <Calendar size={14} className="text-sky-500" /> Obdobie: <span className="text-white italic">{selectedMonth}</span>
-          </h3>
+      <div className="p-6 md:p-8 rounded-[2.5rem] border border-white/5 bg-slate-900/30 backdrop-blur-xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <Calendar size={15} className="text-sky-400" /> Obdobie: <span className="text-white font-mono">{selectedMonth}</span>
+          </div>
           
-          {/* TLAČIDLO PRE ZIP */}
           {filteredDocs.length > 0 && (
             <button 
               onClick={downloadAsZip}
               disabled={zipping}
-              className="flex items-center gap-2 px-5 py-2 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-xl text-[10px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-emerald-500 hover:text-slate-950 transition-all disabled:opacity-50"
             >
-              {zipping ? <Loader2 className="animate-spin" size={12} /> : <ArrowDownToLine size={12} />}
+              {zipping ? <Loader2 className="animate-spin" size={14} /> : <ArrowDownToLine size={14} />}
               {zipping ? "Balím súbory..." : "Stiahnuť všetko (.zip)"}
             </button>
           )}
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="text-[10px] font-black uppercase text-slate-600 border-b border-white/5">
-                <th className="pb-6 text-left pl-4">Dokument</th>
-                <th className="pb-6 text-left">Kategória</th>
-                <th className="pb-6 text-right pr-4 italic text-sky-500">Download</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {filteredDocs.map((doc) => (
-                <tr key={doc.id} className="group hover:bg-white/[0.02] transition-all">
-                  <td className="py-5 pl-4 flex items-center gap-4 text-left">
-                    <div className="p-2.5 rounded-xl bg-white/5 text-sky-500 group-hover:bg-white group-hover:text-black transition-all">
-                      {doc.category === 'PHM' ? <Fuel size={16} /> : 
-                       doc.category === 'VÝPIS' ? <Landmark size={16} /> : 
-                       doc.category === 'SERVIS' ? <Wrench size={16} /> : <FileText size={16} />}
+        {loading ? (
+          <div className="py-16 text-center text-slate-500 text-xs">Načítavam účtovné podklady...</div>
+        ) : filteredDocs.length === 0 ? (
+          <div className="py-20 text-center text-slate-500 text-xs flex flex-col items-center justify-center gap-2">
+            <FileText size={32} className="text-slate-600 mb-1" />
+            V mesiaci {selectedMonth} nie sú žiadne nahraté podklady.
+          </div>
+        ) : (
+          <div className="divide-y divide-white/5">
+            {filteredDocs.map((doc) => (
+              <div key={doc.id} className="flex flex-col md:flex-row items-start md:items-center justify-between py-4 hover:bg-white/[0.02] transition-all gap-4 px-2">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-2xl bg-white/5 text-sky-400 border border-white/5">
+                    {doc.category === 'PHM' ? <Fuel size={18} /> : 
+                     doc.category === 'VÝPIS' ? <Landmark size={18} /> : 
+                     doc.category === 'SERVIS' ? <Wrench size={18} /> : <FileText size={18} />}
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-white truncate max-w-[280px] md:max-w-md">{doc.name}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2.5 py-0.5 rounded-lg uppercase tracking-wider font-semibold">
+                        {doc.category}
+                      </span>
+                      <span className="text-[10px] text-slate-500 font-mono">{doc.size} • {doc.format}</span>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-[13px] font-bold uppercase tracking-tight truncate max-w-[220px]">{doc.name}</span>
-                      <span className="text-[9px] text-slate-500 font-bold uppercase">{doc.size} • {doc.format}</span>
-                    </div>
-                  </td>
-                  <td className="py-5 text-left">
-                    <span className="text-[9px] font-black uppercase px-3 py-1 bg-white/5 rounded-lg text-slate-400 border border-white/5 text-nowrap">
-                      {doc.category}
-                    </span>
-                  </td>
-                  <td className="py-5 text-right pr-4">
-                    <a href={doc.file_url} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 hover:bg-sky-500 hover:text-slate-950 transition-all">
-                      <ArrowDownToLine size={18} />
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          
-          {filteredDocs.length === 0 && !loading && (
-            <div className="py-24 text-center text-[10px] font-black uppercase opacity-20 tracking-[0.4em]">
-              V mesiaci {selectedMonth} nie sú žiadne podklady
-            </div>
-          )}
-        </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+                  <a 
+                    href={doc.file_url} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-sky-500 hover:text-slate-950 transition-all text-xs font-bold text-slate-300 border border-white/5"
+                    title="Stiahnuť súbor"
+                  >
+                    <ArrowDownToLine size={16} /> Stiahnuť
+                  </a>
+                  <button 
+                    onClick={() => handleDelete(doc.id, doc.name)}
+                    className="p-2.5 rounded-xl bg-white/5 hover:bg-rose-500 hover:text-white transition-all text-slate-400 border border-white/5"
+                    title="Vymazať dokument"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

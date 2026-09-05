@@ -61,7 +61,7 @@ export default function AdminLogin() {
           
           <div className="space-y-1">
             <h1 className="text-3xl font-black tracking-tighter text-white uppercase italic">
-              EliteDrive <span className="text-sky-500">ADMiN</span>
+              UltimateDrive <span className="text-sky-500">ADMiN</span>
             </h1>
             <div className="flex items-center justify-center gap-2">
                <div className="h-[1px] w-8 bg-sky-500/30" />
@@ -83,7 +83,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-slate-950/60 border border-white/5 rounded-2xl px-6 py-4 text-sm outline-none focus:border-sky-500/50 focus:bg-slate-950 transition-all placeholder:text-slate-800"
-              placeholder="admin@elitedrive.sk"
+              placeholder="admin@ultimatedrive.sk"
             />
           </div>
 

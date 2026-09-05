@@ -9,7 +9,7 @@ export default function VOPPage() {
       <nav className="sticky top-0 z-50 w-full h-20 border-b border-white/5 bg-[#020512]/95 backdrop-blur-xl px-6 md:px-12 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           <ArrowLeft className="w-4 h-4 text-sky-500 group-hover:-translate-x-1 transition-transform" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-white transition-colors">EliteDrive System</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-white transition-colors">UltimateDrive System</span>
         </Link>
         <div className="flex items-center gap-3">
           <Scale className="w-4 h-4 text-sky-500" />
@@ -39,7 +39,7 @@ export default function VOPPage() {
                 <span className="text-sky-500">01.</span> Úvodné ustanovenia a definície
               </h2>
               <div className="space-y-4">
-                <p>1.1. Tieto Všeobecné obchodné podmienky (ďalej len „VOP“) upravujú právne vzťahy medzi spoločnosťou <span className="text-white font-bold">EliteDrive s. r. o.</span> (ďalej len „Prenajímateľ“) a Nájomcom pri prenájme motorových vozidiel.</p>
+                <p>1.1. Tieto Všeobecné obchodné podmienky (ďalej len „VOP“) upravujú právne vzťahy medzi spoločnosťou <span className="text-white font-bold">UltimateDrive s. r. o.</span> (ďalej len „Prenajímateľ“) a Nájomcom pri prenájme motorových vozidiel.</p>
                 <p>1.2. Nájomca je každá fyzická alebo právnická osoba, ktorá uzatvorí s Prenajímateľom Nájomnú zmluvu (ďalej len „NZ“).</p>
                 <p>1.3. NZ nadobúda platnosť momentom podpisu oboma zmluvnými stranami. Tieto VOP tvoria neoddeliteľnú súčasť NZ.</p>
               </div>

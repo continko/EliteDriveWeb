@@ -42,11 +42,11 @@ export default function OchranaOsobnychUdajov() {
               <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-4 italic">
                 <p>Prevádzkovateľom vašich osobných údajov je spoločnosť:</p>
                 <div className="space-y-2 text-white font-bold italic">
-                  <p className="text-xl">EliteDrive s. r. o.</p>
+                  <p className="text-xl">Ultimaterive s. r. o.</p>
                   <p>Sídlo: [DOPLŇ ULICU, MESTO]</p>
                   <p>IČO: [DOPLŇ IČO]</p>
                   <p>DIČ: [DOPLŇ DIČ]</p>
-                  <p className="text-sky-500 underline underline-offset-4">E-mail: info@elitedrive.sk</p>
+                  <p className="text-sky-500 underline underline-offset-4">E-mail: info@ultimatedrive.sk</p>
                 </div>
                 <p className="text-xs italic leading-relaxed pt-4 border-t border-white/5 italic">
                   Prevádzkovateľ spracúva osobné údaje v súlade s Nariadením Európskeho parlamentu a Rady (EÚ) 2016/679 o ochrane fyzických osôb pri spracúvaní osobných údajov a o voľnom pohybe takýchto údajov (ďalej len „GDPR“) a zákonom č. 18/2018 Z. z. o ochrane osobných údajov.
@@ -187,7 +187,7 @@ export default function OchranaOsobnychUdajov() {
                 <div className="space-y-4 italic italic">
                   <div className="flex items-center gap-3 italic italic italic">
                     <Mail className="w-4 h-4 text-slate-500 italic" />
-                    <span className="text-xs font-bold italic italic italic italic">info@elitedrive.sk</span>
+                    <span className="text-xs font-bold italic italic italic italic">info@ultimatedrive.sk</span>
                   </div>
                   <div className="flex items-center gap-3 italic italic italic italic italic">
                     <MapPin className="w-4 h-4 text-slate-500 italic italic" />
@@ -209,7 +209,7 @@ export default function OchranaOsobnychUdajov() {
 
       <footer className="mt-40 py-10 text-center italic italic italic italic">
         <p className="text-[9px] text-slate-700 font-black uppercase tracking-[0.5em] italic italic italic italic">
-          &copy; 2026 EliteDrive s.r.o. | Legal Integrity Layer
+          &copy; 2026 UltimateDrive s.r.o. | Legal Integrity Layer
         </p>
       </footer>
     </main>

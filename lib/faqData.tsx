@@ -71,7 +71,7 @@ export const faqTranslations: any = {
           { q: "Môžem prevziať/vrátiť vozidlo mimo hodín?", a: "Áno, za príplatok. Štandardne: Po-Pia 8:00-17:00 bez príplatku. Mimo hodín a víkendy podľa sadzobníka." },
           { q: "Ponúkate dlhodobý prenájom?", a: "Áno! 7-13 dní (-10%), 14-29 dní (-15%), 30+ dní (-20-30% zľava)." },
           { q: "Ponúkate náhradné vozidlo?", a: "Áno, spolupracujeme s poisťovňami pri riešení poistných udalostí a doručení vozidla do servisu." },
-          { q: "Kto je prevádzkovateľ EliteDrive?", a: "Bude upresnené čoskoro." }
+          { q: "Kto je prevádzkovateľ UltimateDrive?", a: "Bude upresnené čoskoro." }
         ]
       }
     ]
@@ -146,7 +146,7 @@ export const faqTranslations: any = {
           { q: "Can I pick up/return outside office hours?", a: "Yes, for a fee. Standard: Mon-Fri 8:00-17:00 free. Outside hours and weekends according to the price list." },
           { q: "Do you offer long-term rentals?", a: "Yes! 7-13 days (-10%), 14-29 days (-15%), 30+ days (-20-30% discount)." },
           { q: "Do you provide a replacement vehicle?", a: "Yes, we cooperate with insurance companies when resolving claims and delivering the vehicle to service." },
-          { q: "Who operates EliteDrive?", a: "To be specified soon." }
+          { q: "Who operates UltimateDrive?", a: "To be specified soon." }
         ]
       }
     ]

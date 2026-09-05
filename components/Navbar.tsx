@@ -63,7 +63,7 @@ export function Navbar() {
               <CarFront className="h-6 w-6 text-slate-950" />
             </div>
             <span className="text-2xl font-black tracking-tighter text-white uppercase italic">
-              ELITE<span className="text-sky-500">Drive</span>
+              ULTIMATE<span className="text-sky-500">Drive</span>
             </span>
           </Link>
 

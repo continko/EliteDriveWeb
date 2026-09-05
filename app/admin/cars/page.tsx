@@ -28,7 +28,7 @@ export default function AdminCarsList() {
 
     if (error) {
       console.error("Supabase Error Details:", error);
-      toast.error("Chyba pri načítaní áut");
+      toast.error("Chyba pri načítaní áut UltimateDrive");
     } else if (data) {
       setCars(data);
       setFilteredCars(data);
@@ -38,7 +38,7 @@ export default function AdminCarsList() {
 
   useEffect(() => { fetchCars(); }, []);
 
-  // CLIENT-SIDE FILTER: Rozšírený tak, aby správne reagoval aj na ME a BA
+  // CLIENT-SIDE FILTER pre trhy (SK, HR, HU, ME, BA)
   useEffect(() => {
     if (activeMarket === "ALL") {
       setFilteredCars(cars);
@@ -57,9 +57,10 @@ export default function AdminCarsList() {
     if (!confirm("Naozaj chceš odstrániť toto vozidlo z UltimateDrive flotily?")) return;
     
     const { error } = await supabase.from('cars').delete().eq('id', id);
-    if (error) toast.error("Nepodarilo sa anticancer");
-    else {
-      toast.success("Auto bolo odstránené");
+    if (error) {
+      toast.error("Nepodarilo sa odstrániť vozidlo.");
+    } else {
+      toast.success("Vozidlo bolo úspešne vymazané z flotily.");
       fetchCars();
     }
   };
@@ -69,7 +70,6 @@ export default function AdminCarsList() {
       return null;
     }
 
-    // Ak sme na ALL, ako predvolenú cenu skúsime ukázať SK, ak neexistuje, zoberie sa hneď prvá dostupná trhová cena
     const targetMarket = activeMarket === "ALL" ? "SK" : activeMarket;
     let found = car.car_prices.find((p: any) => p.market?.toUpperCase() === targetMarket.toUpperCase());
     
@@ -97,30 +97,46 @@ export default function AdminCarsList() {
     return count > 0 ? Math.round(total / count) : 0;
   };
 
+  // Reálny súčet obstarávacej ceny zo stĺpca purchase_price + konzolový test
+  const calculateTotalAssetValue = () => {
+    if (!filteredCars || filteredCars.length === 0) return 0;
+    
+    let total = 0;
+    filteredCars.forEach(car => {
+      console.log(`Auto: ${car.brand} ${car.name} | purchase_price:`, car.purchase_price);
+      if (car.purchase_price) {
+        total += Number(car.purchase_price);
+      }
+    });
+
+    return total;
+  };
+
   return (
-    <div className="space-y-10 font-urbanist text-left">
+    <div className="space-y-10 font-urbanist text-left pb-20">
+      
       {/* HEADER */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 bg-slate-900/40 p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-xl">
         <div>
-          <h1 className="text-5xl font-black text-white uppercase italic tracking-tighter leading-none">
-            Garage <span className="text-sky-500 text-outline-sm">Assets</span>
+          <h1 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter leading-none">
+            Garage <span className="text-sky-400">Assets</span>
           </h1>
-          <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em] mt-2 flex items-center gap-2">
-            <Activity size={14} className="text-sky-500" /> Aktuálny stav UltimateDrive flotily
+          <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.4em] mt-2 flex items-center gap-2">
+            <Activity size={14} className="text-sky-400" /> Aktuálny stav UltimateDrive flotily
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
-          {/* Prepínač krajín rozšírený o ME a BA */}
-          <div className="flex gap-1 bg-slate-900/50 p-1.5 rounded-2xl border border-white/5 backdrop-blur-md">
+          {/* Prepínač krajín */}
+          <div className="flex gap-1 bg-slate-950/60 p-1.5 rounded-2xl border border-white/5 backdrop-blur-md">
             {["ALL", "SK", "HR", "HU", "ME", "BA"].map((m) => (
               <button 
                 key={m}
                 onClick={() => setActiveMarket(m)}
-                className={`px-5 py-2 rounded-xl text-[10px] font-black transition-all ${
+                className={`px-4 py-2 rounded-xl text-[10px] font-black transition-all ${
                   activeMarket === m 
                     ? "bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20" 
-                    : "text-slate-500 hover:text-white"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 {m}
@@ -129,7 +145,7 @@ export default function AdminCarsList() {
           </div>
 
           <Link href="/admin/cars/new" 
-                className="flex items-center gap-3 bg-white text-slate-950 px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-sky-500 transition-all active:scale-95 shadow-xl shadow-white/5">
+                className="flex items-center gap-3 bg-sky-500 hover:bg-sky-400 text-slate-950 px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-sky-500/20">
             <Plus size={16} strokeWidth={3} /> Pridať vozidlo
           </Link>
         </div>
@@ -138,7 +154,7 @@ export default function AdminCarsList() {
       {/* RÝCHLE ŠTATISTIKY */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatBox label="Vozidlá v správe" value={filteredCars.length.toString()} sub="Aktívne v ponuke" color="sky" />
-          <StatBox label="Odhadovaná hodnota" value={`${(filteredCars.length * 85000).toLocaleString()} €`} sub="Kapitál na kolesách" color="emerald" />
+          <StatBox label="Odhadovaná hodnota" value={`${calculateTotalAssetValue().toLocaleString()} €`} sub="Celej flotily" color="emerald" />
           <StatBox label="Priemerný denný nájom" value={`${calculateAveragePrice()} €`} sub={activeMarket === "ALL" ? "Cez všetky trhy" : `Pre trh ${activeMarket}`} color="purple" />
       </div>
 
@@ -147,11 +163,11 @@ export default function AdminCarsList() {
         {loading ? (
           <div className="col-span-full py-32 text-center">
             <div className="inline-block w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="text-slate-500 font-black uppercase text-[10px] tracking-[0.3em]">Synchronizujem garáž...</p>
+            <p className="text-slate-400 font-black uppercase text-[10px] tracking-[0.3em]">Synchronizujem garáž UltimateDrive...</p>
           </div>
         ) : filteredCars.length === 0 ? (
-          <div className="col-span-full py-32 text-center border border-dashed border-white/10 rounded-[3rem]">
-            <p className="text-slate-500 font-black uppercase text-[10px] tracking-[0.3em]">V tejto sekcii zatiaľ nemáš žiadne stroje</p>
+          <div className="col-span-full py-32 text-center border border-dashed border-white/10 rounded-[3rem] bg-slate-900/20">
+            <p className="text-slate-400 font-black uppercase text-[10px] tracking-[0.3em]">V tejto sekcii zatiaľ nemáš žiadne stroje</p>
           </div>
         ) : filteredCars.map((car) => {
           const details = car.car_details?.[0];
@@ -164,7 +180,8 @@ export default function AdminCarsList() {
             : "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=600&auto=format&fit=crop";
 
           return (
-            <div key={car.id} className="group bg-slate-900/20 border border-white/5 rounded-[3rem] overflow-hidden hover:border-white/20 transition-all duration-500">
+            <div key={car.id} className="group bg-slate-900/40 border border-white/5 rounded-[2.5rem] overflow-hidden hover:border-white/20 transition-all duration-500 backdrop-blur-xl flex flex-col justify-between">
+              
               {/* Image Section */}
               <div className="h-52 relative overflow-hidden bg-slate-950">
                 <img 
@@ -176,58 +193,61 @@ export default function AdminCarsList() {
                 {/* STK Alert */}
                 {stkDays !== null && stkDays < 30 && (
                   <div className="absolute bottom-4 left-6 px-3 py-1 bg-rose-600 text-white text-[8px] font-black uppercase rounded-full animate-pulse z-20">
-                    STK EXPIRES IN {stkDays} DAYS
+                    STK vyprší o {stkDays} dní
                   </div>
                 )}
 
                 <div className="absolute top-6 right-6">
-                  <span className="px-3 py-1 bg-slate-950/80 backdrop-blur-md border border-white/10 rounded-full text-[9px] font-black text-sky-500 uppercase tracking-widest">
+                  <span className="px-3 py-1 bg-slate-950/80 backdrop-blur-md border border-white/10 rounded-full text-[9px] font-black text-sky-400 uppercase tracking-widest">
                     {activeMarket === "ALL" ? (car.market_code || currentPriceRow?.market || "SK") : activeMarket}
                   </span>
                 </div>
               </div>
 
               {/* Info Section */}
-              <div className="p-8 space-y-6">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-2xl font-black uppercase italic tracking-tighter leading-none">{car.brand}</h3>
-                    <p className="text-sky-500 font-black text-sm uppercase italic">{car.name}</p>
+              <div className="p-8 space-y-6 flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-start gap-4">
+                    <div>
+                      <h3 className="text-2xl font-black uppercase italic tracking-tighter leading-none">{car.brand}</h3>
+                      <p className="text-sky-400 font-black text-sm uppercase italic mt-1">{car.name}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-2xl font-black italic tracking-tighter text-white">
+                        {currentPriceRow?.price_1_day ? `${currentPriceRow.price_1_day}€` : '—'}
+                      </p>
+                      <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest">
+                        deň ({currentPriceRow?.market?.toUpperCase() || (activeMarket === "ALL" ? "SK" : activeMarket)})
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-black italic tracking-tighter text-white">
-                      {currentPriceRow?.price_1_day ? `${currentPriceRow.price_1_day}€` : '—'}
-                    </p>
-                    <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">
-                      denne ({currentPriceRow?.market?.toUpperCase() || (activeMarket === "ALL" ? "SK" : activeMarket)})
-                    </p>
+
+                  <div className="grid grid-cols-3 gap-4 py-5 my-5 border-y border-white/5 bg-slate-950/30 rounded-2xl px-2">
+                    <TechInfo icon={<Fuel size={14}/>} value={car.fuel} />
+                    <TechInfo icon={<Zap size={14}/>} value={car.power} />
+                    <TechInfo icon={<Gauge size={14}/>} value={details?.mileage ? `${details.mileage.toLocaleString()} km` : car.transmission} />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 py-4 border-y border-white/5">
-                  <TechInfo icon={<Fuel size={14}/>} value={car.fuel} />
-                  <TechInfo icon={<Zap size={14}/>} value={car.power} />
-                  <TechInfo icon={<Gauge size={14}/>} value={details?.mileage ? `${details.mileage.toLocaleString()} km` : car.transmission} />
-                </div>
-
-                <div className="flex gap-3">
+                <div className="flex gap-3 pt-2">
                   <Link 
                     href={`/admin/cars/${car.id}`} 
-                    className="w-14 h-14 flex items-center justify-center rounded-2xl bg-sky-500 text-slate-950 hover:bg-white transition-all shadow-lg shadow-sky-500/10"
+                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 hover:bg-sky-500 hover:text-slate-950 transition-all shrink-0"
                     title="Technická karta a servis"
                   >
-                    <Activity size={20} />
+                    <Activity size={18} />
                   </Link>
 
-                  <Link href={`/admin/cars/edit/${car.id}`} className="flex-1 bg-white/5 hover:bg-white/10 py-4 rounded-2xl border border-white/5 transition-all text-center text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                    <Edit3 size={14} /> Spravovať výbavu
+                  <Link href={`/admin/cars/edit/${car.id}`} className="flex-1 bg-white/5 hover:bg-white/10 py-3.5 px-4 rounded-2xl border border-white/5 transition-all text-center text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                    <Edit3 size={14} /> Výbava
                   </Link>
                   
                   <button 
                     onClick={() => deleteCar(car.id)}
-                    className="w-14 h-14 flex items-center justify-center rounded-2xl bg-rose-500/5 border border-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all active:scale-90"
+                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white transition-all shrink-0 active:scale-95"
+                    title="Vymazať vozidlo"
                   >
-                    <Trash2 size={20} />
+                    <Trash2 size={18} />
                   </button>
                 </div>
               </div>
@@ -241,24 +261,24 @@ export default function AdminCarsList() {
 
 function StatBox({ label, value, sub, color }: any) {
   const colors: any = {
-    sky: "text-sky-500 bg-sky-500/10",
-    emerald: "text-emerald-500 bg-emerald-500/10",
-    purple: "text-purple-500 bg-purple-500/10"
+    sky: "text-sky-400 bg-sky-500/10 border-sky-500/20",
+    emerald: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    purple: "text-purple-400 bg-purple-500/10 border-purple-500/20"
   };
   return (
-    <div className="p-6 rounded-[2rem] bg-white/5 border border-white/5 text-left">
-      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{label}</p>
-      <p className={`text-2xl font-black italic ${colors[color].split(' ')[0]}`}>{value}</p>
-      <p className="text-[9px] text-slate-600 font-bold uppercase mt-1 tracking-tight">{sub}</p>
+    <div className={`p-6 rounded-[2.5rem] bg-slate-900/40 border border-white/5 backdrop-blur-xl text-left relative overflow-hidden`}>
+      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+      <p className={`text-3xl font-black italic tracking-tight ${colors[color].split(' ')[0]}`}>{value}</p>
+      <p className="text-[9px] text-slate-500 font-bold uppercase mt-1 tracking-wider">{sub}</p>
     </div>
   );
 }
 
 function TechInfo({ icon, value }: any) {
   return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div className="text-slate-600">{icon}</div>
-      <span className="text-[10px] font-black uppercase tracking-tighter truncate max-w-full">{value}</span>
+    <div className="flex flex-col items-center justify-center gap-1">
+      <div className="text-slate-400">{icon}</div>
+      <span className="text-[10px] font-black uppercase tracking-tighter truncate max-w-full text-slate-300">{value}</span>
     </div>
   );
 }

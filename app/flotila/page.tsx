@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { type Car } from "@/lib/cars";
 import { getCarsFromDatabase } from "@/lib/dbCars";
 import { CarCard } from "@/components/CarCard";
-import { CarFront, Filter } from "lucide-react";
+import { CarFront, Clock } from "lucide-react";
 import { useLang } from "@/context/LanguageContext";
 
 export default function FlotilaPage() {
@@ -13,8 +13,11 @@ export default function FlotilaPage() {
   // 1. Stav pre načítané autá zo Supabase a stav loading
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // 2. Stav pre aktívny filter (predvolene je 0 -> Všetky / All)
+  const [activeFilterIndex, setActiveFilterIndex] = useState<number>(0);
 
-  // 2. Načítanie dát z DB reagujúce na zmenu jazyka/trhu
+  // 3. Načítanie dát z DB reagujúce na zmenu jazyka/trhu
   useEffect(() => {
     async function loadFlotila() {
       setLoading(true);
@@ -24,6 +27,19 @@ export default function FlotilaPage() {
     }
     loadFlotila();
   }, [lang]);
+
+  // 4. Filtrovacia logika
+  const filteredCars = useMemo(() => {
+    if (activeFilterIndex === 0) return cars; // 0 je zvyčajne "Všetky"
+    
+    const selectedFilterText = t.fleet_filters?.[activeFilterIndex]?.toLowerCase();
+    if (!selectedFilterText) return cars;
+
+    return cars.filter((car: any) => {
+      const carCategory = car.category?.toLowerCase() || car.type?.toLowerCase() || "";
+      return carCategory.includes(selectedFilterText);
+    });
+  }, [cars, activeFilterIndex, t]);
 
   return (
     <main className="relative min-h-screen bg-[#020617] pt-40 pb-24 overflow-hidden">
@@ -48,27 +64,27 @@ export default function FlotilaPage() {
           </p>
         </div>
 
-        {/* FILTRE */}
+        {/* INTERAKTÍVNE FILTRE */}
         <div className="mb-16 flex flex-wrap justify-center gap-3">
-          {t.fleet_filters.map((filter: string, idx: number) => (
-            <button 
-              key={idx}
-              className={`px-6 py-3 rounded-2xl border text-[11px] font-black uppercase tracking-widest transition-all
-                ${idx === 0 
-                  ? "border-sky-500 bg-sky-500 text-slate-950" 
-                  : "border-white/5 bg-white/[0.02] text-slate-400 hover:border-white/20 hover:text-white"
-                }`}
-            >
-              {filter}
-            </button>
-          ))}
-          <button className="px-6 py-3 rounded-2xl border border-white/5 bg-white/[0.02] text-sky-500 flex items-center gap-2">
-            <Filter className="h-3 w-3" />
-            <span className="text-[11px] font-black uppercase tracking-widest">{t.fleet_filter_more}</span>
-          </button>
+          {t.fleet_filters?.map((filter: string, idx: number) => {
+            const isActive = activeFilterIndex === idx;
+            return (
+              <button 
+                key={idx}
+                onClick={() => setActiveFilterIndex(idx)}
+                className={`px-6 py-3 rounded-2xl border text-[11px] font-black uppercase tracking-widest transition-all cursor-pointer
+                  ${isActive 
+                    ? "border-sky-500 bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20" 
+                    : "border-white/5 bg-white/[0.02] text-slate-400 hover:border-white/20 hover:text-white"
+                  }`}
+              >
+                {filter}
+              </button>
+            );
+          })}
         </div>
 
-        {/* GRID – UPRAVENÝ pre loading animáciu */}
+        {/* GRID – LOADING / FILTROVANÉ AUTÁ / PRÁZDNY STAV */}
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {[1, 2, 3, 4, 5, 6].map((n) => (
@@ -78,13 +94,47 @@ export default function FlotilaPage() {
               />
             ))}
           </div>
-        ) : (
+        ) : filteredCars.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {cars.map((car) => (
-              <div key={car.id} className="group transition-all duration-500 hover:-translate-y-2">
-                 <CarCard car={car} />
-              </div>
-            ))}
+            {filteredCars.map((car: any) => {
+              const isComingSoon = car.is_active === false;
+
+              return (
+                <div key={car.id} className="relative group transition-all duration-500">
+                  
+                  {/* VIZUÁLNY ŠTÍTOK COMING SOON */}
+                  {isComingSoon && (
+                    <div className="absolute top-4 right-4 z-30 bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5 border border-amber-300 pointer-events-none">
+                      <Clock size={12} strokeWidth={3} /> Coming Soon
+                    </div>
+                  )}
+
+                  {/* Ak je Coming Soon, obalíme kartu do bloku, ktorý blokuje kliknutie a pridá sivý filter */}
+                  {isComingSoon ? (
+                    <div className="relative opacity-75 cursor-not-allowed select-none">
+                      {/* Neviditeľná vrstva, ktorá fyzicky zablokuje akékoľvek kliknutie na kartu */}
+                      <div className="absolute inset-0 z-20 bg-transparent" />
+                      <CarCard car={car} />
+                    </div>
+                  ) : (
+                    <div className="hover:-translate-y-2 transition-transform duration-500">
+                      <CarCard car={car} />
+                    </div>
+                  )}
+
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="rounded-[2.5rem] border border-white/5 bg-slate-900/20 p-16 text-center text-slate-400 max-w-xl mx-auto">
+            <p className="text-sm font-bold uppercase tracking-wider">V tejto kategórii sa momentálne nenachádzajú žiadne vozidlá.</p>
+            <button 
+              onClick={() => setActiveFilterIndex(0)}
+              className="mt-6 px-6 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer"
+            >
+              Zobraziť všetky autá
+            </button>
           </div>
         )}
 

@@ -10,7 +10,7 @@ export function Footer() {
 
   const footerTexts = {
     sk: {
-      about: "Prémiová požičovňa vozidiel, ktorá prináša zážitok z jazdy priamo k vám. Kvalita a štýl bez kompromisov pod značkou EliteDrive.",
+      about: "Prémiová požičovňa vozidiel, ktorá prináša zážitok z jazdy priamo k vám. Kvalita a štýl bez kompromisov pod značkou UltimateDrive.",
       contactTitle: "Kontakt",
       callUs: "Zavolajte nám",
       writeUs: "Napíšte nám",
@@ -23,7 +23,7 @@ export function Footer() {
       complaints: "Reklamačný poriadok"
     },
     en: {
-      about: "Premium car rental service bringing the driving experience directly to you. Quality and style without compromise under the EliteDrive brand.",
+      about: "Premium car rental service bringing the driving experience directly to you. Quality and style without compromise under the UltimateDrive brand.",
       contactTitle: "Contact",
       callUs: "Call us",
       writeUs: "Email us",
@@ -63,8 +63,8 @@ export function Footer() {
             </p>
             <div className="flex gap-4 pt-2">
               {[
-                { icon: Instagram, href: "https://instagram.com/elitedrive" },
-                { icon: Facebook, href: "https://facebook.com/elitedrive" },
+                { icon: Instagram, href: "https://instagram.com/ultimatedrive" },
+                { icon: Facebook, href: "https://facebook.com/ultimatedrive" },
                 { icon: MessageCircle, href: "https://wa.me/421910666949" }
               ].map((social, i) => (
                 <a key={i} href={social.href} target="_blank" rel="noopener noreferrer" className="h-11 w-11 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center text-slate-400 hover:text-sky-400 hover:border-sky-500/50 transition-all hover:-translate-y-1">
@@ -89,13 +89,13 @@ export function Footer() {
                   <span className="text-sm font-bold text-slate-200">+421 9XX XXX XXX</span>
                 </div>
               </a>
-              <a href="mailto:info@elitedrive.sk" className="group flex items-center md:items-start gap-4 justify-center md:justify-start">
+              <a href="mailto:info@ultimatedrive.sk" className="group flex items-center md:items-start gap-4 justify-center md:justify-start">
                 <div className="h-10 w-10 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center text-sky-400 transition-colors group-hover:bg-sky-500 group-hover:text-slate-950">
                   <Mail size={16} />
                 </div>
                 <div className="flex flex-col items-start">
                   <span className="hidden md:block text-[9px] font-black text-slate-500 uppercase tracking-widest">{ui.writeUs}</span>
-                  <span className="text-sm font-bold text-slate-200">info@elitedrive.sk</span>
+                  <span className="text-sm font-bold text-slate-200">info@ultimatedrive.sk</span>
                 </div>
               </a>
             </div>
@@ -119,7 +119,7 @@ export function Footer() {
         {/* BOTTOM SECTION */}
         <div className="pt-8 border-t border-white/5 flex flex-col-reverse md:flex-row justify-between items-center gap-8">
           <p className="text-[9px] font-black text-slate-500 tracking-[0.2em] text-center uppercase">
-            © {currentYear} <span className="text-white">EliteDrive</span>. {ui.rights}
+            © {currentYear} <span className="text-white">UltimateDrive</span>. {ui.rights}
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             {[

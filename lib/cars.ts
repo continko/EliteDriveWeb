@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase"; // Tvoj univerzálny Supabase klient
 
-// 1. Tieto typy ti zostávajú presne tak, ako ich máš (aby ti frontend nezlyhal)
+// 1. Pridané is_active?: boolean do typu Car
 export type PricingTier = {
   label: string;
   daysFrom: number;
@@ -34,16 +34,17 @@ export type Car = {
   repairPriceStandard: number;
   participationBasic: string;
   participationStandard: string;
+  is_active?: boolean; // 🟢 Pridané sem, aby to frontend viděl
 };
 
-// 2. Definujeme si typ, ako presne ti prichádzajú surové dáta zo Supabase
+// 2. Pridané is_active: boolean do SupabaseCarResponse
 export type SupabaseCarResponse = {
   id: string;
   brand: string;
   name: string;
   year: number;
   color: string;
-  image_url: string; // V databáze máš pravdepodobne snake_case
+  image_url: string;
   transmission: "automat";
   fuel: "Benzín";
   drive: string;
@@ -60,6 +61,7 @@ export type SupabaseCarResponse = {
   repair_price_standard: number;
   participation_basic: string;
   participation_standard: string;
+  is_active: boolean; // 🟢 Pridané sem, aby sa prečítalo zo Supabase
   car_prices: {
     price_1_day: number;
     price_2_3_days: number;
@@ -79,13 +81,10 @@ export type SupabaseCarResponse = {
   }[];
 };
 
-// 3. Helper funkcia, ktorá vezme dáta z DB a pretransformuje ich na tvoj starý typ 'Car'
+// 3. Helper funkcia, ktorá premapuje dáta vrátane is_active
 export function mapDbCarToFrontend(dbCar: SupabaseCarResponse): Car {
-  // POISTKA: Skontrolujeme, či pole car_prices vôbec existuje a má aspoň jeden záznam
   const prices = dbCar.car_prices && dbCar.car_prices.length > 0 ? dbCar.car_prices[0] : undefined;
 
-  // Ak prices existuje, namapujeme reálne hodnoty s poistkami na nuly (ak by bolo niečo null v DB).
-  // Ak prices neexistuje, vygeneruje sa pole s nulovými hodnotami, aby nespadol frontend.
   const pricing: PricingTier[] = prices 
     ? [
         { label: "1 deň", daysFrom: 1, daysTo: 1, dailyKmLimit: prices.km_limit_1_day || 0, pricePerDay: prices.price_1_day || 0 },
@@ -104,7 +103,6 @@ export function mapDbCarToFrontend(dbCar: SupabaseCarResponse): Car {
         { label: "23+ dní", daysFrom: 23, daysTo: null, dailyKmLimit: 0, pricePerDay: 0 }
       ];
 
-  // BEZPEČNÝ OBRÁZKOVÝ FALLBACK: 
   const cleanUrl = dbCar.image_url?.trim();
   const verifiedImageUrl = cleanUrl && cleanUrl !== "" 
     ? dbCar.image_url 
@@ -135,12 +133,9 @@ export function mapDbCarToFrontend(dbCar: SupabaseCarResponse): Car {
     participationBasic: dbCar.participation_basic || "—",
     participationStandard: dbCar.participation_standard || "—",
     pricing: pricing,
+    is_active: dbCar.is_active ?? true, // 🟢 Prenesieme stav is_active (ak je null/undefined, bereme ako true)
   };
 }
-
-// ==========================================
-// DOPLNENÉ FUNKCIE PRE KOMUNIKÁCIU SO SUPABASE
-// ==========================================
 
 // Funkcia pre hlavnú stránku a katalóg (Flotilu)
 export async function getCarsFromDatabase(marketCode: string = "sk"): Promise<Car[]> {
@@ -156,10 +151,8 @@ export async function getCarsFromDatabase(marketCode: string = "sk"): Promise<Ca
     return [];
   }
 
-  // Prefiltrujeme a namapujeme záznamy bezpečne na strane kódu
   return data
     .map((dbCar) => {
-      // Vytvoríme si kópiu objektu, kde car_prices prefiltrujeme iba na zadaný market
       const filteredPrices = dbCar.car_prices 
         ? dbCar.car_prices.filter((p: any) => p.market === marketCode) 
         : [];
@@ -187,7 +180,6 @@ export async function getCarById(id: string, marketCode: string = "sk"): Promise
     return undefined;
   }
 
-  // Odfiltrujeme ceny pre konkrétny market
   const filteredPrices = data.car_prices 
     ? data.car_prices.filter((p: any) => p.market === marketCode) 
     : [];

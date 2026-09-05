@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Gauge, Settings2, Zap, Snowflake, ArrowUpRight } from "lucide-react";
+import { Gauge, Settings2, Zap, Snowflake, ArrowUpRight, Clock } from "lucide-react";
 import type { Car } from "@/lib/cars";
 import { useLang } from "@/context/LanguageContext";
 
@@ -12,11 +12,14 @@ type CarCardProps = {
 export function CarCard({ car }: CarCardProps) {
   const { t, lang } = useLang();
 
+  // 1. Zistíme, či je auto Coming Soon (ošetríme rôzne zápisy: false, "false", 0, alebo string)
+  const rawActive = (car as any).is_active;
+  const isComingSoon = rawActive === false || rawActive === "false" || rawActive === 0;
+
   const startingPrice = car.pricing?.length 
     ? car.pricing[car.pricing.length - 1].pricePerDay 
     : 0;
 
-  // BEZPEČNÉ VYTIHNUTIE VÝKONU
   const powerKw = car.power ? car.power.split(" ")[0] : "—";
 
   const translateSpec = (value: string) => {
@@ -34,20 +37,24 @@ export function CarCard({ car }: CarCardProps) {
     return specs[value]?.[lang] || value;
   };
 
-  return (
-    <article className="group relative flex flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/60 backdrop-blur-xl transition-all duration-500 hover:border-sky-500/50 hover:shadow-[0_0_50px_-12px_rgba(14,165,233,0.3)]">
+  // Vizuálny obsah karty
+  const cardContent = (
+    <article className={`group relative flex flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/60 backdrop-blur-xl transition-all duration-500 ${isComingSoon ? "opacity-75 cursor-not-allowed select-none" : "hover:border-sky-500/50 hover:shadow-[0_0_50px_-12px_rgba(14,165,233,0.3)]"}`}>
       
-      {/* OBRÁZOK - KLASICKÝ <img> TAG PRE ABSOLÚTNU ISTOTU */}
+      {/* ⏳ ŠTÍTOK COMING SOON - Zobrazí sa v pravom hornom rohu */}
+      {isComingSoon && (
+        <div className="absolute top-4 right-4 z-30 bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5 border border-amber-300 pointer-events-none">
+          <Clock size={12} strokeWidth={3} /> Coming Soon
+        </div>
+      )}
+
+      {/* OBRÁZOK */}
       <div className="relative h-64 w-full p-3">
         <div className="relative h-full w-full overflow-hidden rounded-[2rem]">
           <img
-            src={car.imageUrl || "/car-placeholder.png"}
+            src={car.imageUrl && car.imageUrl.trim() !== "" ? car.imageUrl : "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1000&auto=format&fit=crop"}
             alt={`${car.brand} ${car.name}`}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-            onError={(e) => {
-              // Ak by URL predsa len zlyhala, prehliadač bezpečne podhodí placeholder bez pádu JS
-              e.currentTarget.src = "/car-placeholder.png";
-            }}
+            className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out ${!isComingSoon ? "group-hover:scale-110" : ""}`}
           />
           <div className="absolute left-4 top-4 rounded-xl bg-slate-950/60 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-md border border-white/10">
             Model {car.year}
@@ -57,8 +64,6 @@ export function CarCard({ car }: CarCardProps) {
 
       {/* INFO SEKCIA */}
       <div className="flex flex-1 flex-col gap-6 p-6 pt-2">
-        
-        {/* Názov a Cena */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-sky-400">{car.brand}</p>
@@ -73,7 +78,7 @@ export function CarCard({ car }: CarCardProps) {
           </div>
         </div>
 
-        {/* TECHNICKÉ PARAMETRE */}
+        {/* PARAMETRE */}
         <div className="grid grid-cols-2 gap-2">
           {[
             { icon: Zap, value: powerKw !== "—" ? `${powerKw} kW` : "—" },
@@ -93,17 +98,32 @@ export function CarCard({ car }: CarCardProps) {
           ))}
         </div>
 
-        {/* AKČNÁ ČASŤ */}
+        {/* TLAČIDLO / AKCIA */}
         <div className="mt-auto pt-2">
-          <Link
-            href={`/cars/${car.id}`}
-            className="group/btn relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-sky-500 py-4 text-xs font-bold uppercase tracking-widest text-slate-950 transition-all hover:bg-sky-400 hover:shadow-[0_0_25px_rgba(14,165,233,0.4)] active:scale-[0.98]"
-          >
-            <span className="relative z-10 text-slate-950">{t.car_btn_details || "Detail vozidla"}</span>
-            <ArrowUpRight className="relative z-10 h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-          </Link>
+          {isComingSoon ? (
+            <div className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white/5 py-4 text-xs font-bold uppercase tracking-widest text-slate-500 cursor-not-allowed border border-white/5 select-none">
+              <span>V príprave</span>
+            </div>
+          ) : (
+            <div className="group/btn relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-sky-500 py-4 text-xs font-bold uppercase tracking-widest text-slate-950 transition-all">
+              <span className="relative z-10 text-slate-950">{t.car_btn_details || "Detail vozidla"}</span>
+              <ArrowUpRight className="relative z-10 h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+            </div>
+          )}
         </div>
       </div>
     </article>
+  );
+
+  // 🚫 AK JE COMING SOON: Vrátime iba obyčajný blok, ktorý sa nedá rozkliknúť (žiadny Link, žiadna navigácia)
+  if (isComingSoon) {
+    return <div className="relative pointer-events-none">{cardContent}</div>;
+  }
+
+  // ✅ AK JE AKTÍVNE: Obalíme celú kartu do štandardného odkazu
+  return (
+    <Link href={`/cars/${car.id}`} className="block">
+      {cardContent}
+    </Link>
   );
 }

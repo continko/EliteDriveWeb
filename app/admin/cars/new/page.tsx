@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { 
   Car, Save, ArrowLeft, Image as ImageIcon, 
   Settings2, Fuel, Zap, Clock, Shield, Euro,
-  Globe, Gauge, Hammer
+  Globe, Gauge, Hammer, UserCheck, Calendar, DollarSign
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -15,7 +15,7 @@ export default function NewCarPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  // STAVY PRE FORMULÁR - UltimateDrive Branding
+  // STAVY PRE FORMULÁR - UltimateDrive Branding (vrátane purchase_price)
   const [formData, setFormData] = useState({
     brand: "",
     name: "",
@@ -28,10 +28,11 @@ export default function NewCarPage() {
     drive: "4x4",
     min_age: 21,
     min_license_years: 2,
-    equipment: "", 
+    equipment: "",
+    purchase_price: 0, // <-- Pridaná nákupná cena
   });
 
-  // STAVY PRE CENY
+  // STAVY PRE CENY (prenájmu)
   const [prices, setPrices] = useState({
     price_1_day: 0,
     price_2_3_days: 0,
@@ -40,14 +41,19 @@ export default function NewCarPage() {
     price_15_22_days: 0,
     price_23_plus_days: 0,
     deposit: 1000,
+    extra_km_price: 0,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // POISTKA PROTI DUPLICITNÉMU KLIKNUTIU
+    if (loading) return; 
+    
     setLoading(true);
 
     try {
-      // 1. Vložíme auto do tabuľky 'cars'
+      // 1. Vložíme auto do tabuľky 'cars' (vrátane nákupnej ceny)
       const { data: carData, error: carError } = await supabase
         .from('cars')
         .insert([{
@@ -60,7 +66,7 @@ export default function NewCarPage() {
 
       if (carError) throw carError;
 
-      // 2. Vložíme ceny do tabuľky 'car_prices'
+      // 2. Vložíme ceny a podmienky do tabuľky 'car_prices'
       const { error: priceError } = await supabase
         .from('car_prices')
         .insert([{
@@ -74,8 +80,7 @@ export default function NewCarPage() {
       router.push("/admin/cars");
     } catch (error: any) {
       toast.error(`Chyba pri ukladaní: ${error.message}`);
-    } finally {
-      setLoading(false);
+      setLoading(false); // Odomkneme formulár len v prípade chyby
     }
   };
 
@@ -101,7 +106,7 @@ export default function NewCarPage() {
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* LEFT COLUMN: SPECS */}
+        {/* LEFT COLUMN: SPECS & RENTAL CONDITIONS */}
         <div className="lg:col-span-8 space-y-8">
           
           {/* Značka a Model */}
@@ -138,6 +143,57 @@ export default function NewCarPage() {
                           onChange={(v: any) => setFormData({...formData, fuel: v})} />
               <InputGroup label="Výkon" placeholder="525 hp / 465 Nm" icon={<Zap size={12}/>}
                           onChange={(v: any) => setFormData({...formData, power: v})} />
+            </div>
+
+            {/* NÁKUPNÁ CENA VOZIDLA */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <Euro size={12} className="text-emerald-500" /> Nákupná cena vozidla (€)
+                </label>
+                <input 
+                  type="number" 
+                  placeholder="napr. 150000" 
+                  className="w-full bg-slate-950 border border-white/10 rounded-2xl p-4 text-sm text-white font-bold outline-none focus:border-sky-500 transition-all"
+                  onChange={e => setFormData({...formData, purchase_price: Number(e.target.value)})} 
+                />
+              </div>
+              <InputGroup label="Rok výroby" placeholder="2024" icon={<Calendar size={12}/>}
+                          onChange={(v: any) => setFormData({...formData, year: Number(v)})} />
+            </div>
+          </div>
+
+          {/* PODMIENKY PRENÁJMU (Vek a Vodičák) */}
+          <div className="p-10 rounded-[3rem] border border-white/5 bg-slate-900/20 backdrop-blur-sm space-y-8">
+            <div className="flex items-center gap-3 text-sky-500">
+              <UserCheck size={20} strokeWidth={3} />
+              <h2 className="font-black uppercase tracking-widest text-sm italic">Podmienky prenájmu vozidla</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <UserCheck size={12} /> Minimálny vek vodiča (roky)
+                </label>
+                <input 
+                  type="number" 
+                  defaultValue={21}
+                  className="w-full bg-slate-950 border border-white/10 rounded-2xl p-4 text-sm text-white font-bold outline-none focus:border-sky-500 transition-all"
+                  onChange={e => setFormData({...formData, min_age: Number(e.target.value)})} 
+                />
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <Calendar size={12} /> Minimálna prax vodičáku (roky)
+                </label>
+                <input 
+                  type="number" 
+                  defaultValue={2}
+                  className="w-full bg-slate-950 border border-white/10 rounded-2xl p-4 text-sm text-white font-bold outline-none focus:border-sky-500 transition-all"
+                  onChange={e => setFormData({...formData, min_license_years: Number(e.target.value)})} 
+                />
+              </div>
             </div>
           </div>
 
@@ -176,7 +232,8 @@ export default function NewCarPage() {
                 { label: "2 - 3 Dni", key: "price_2_3_days" },
                 { label: "4 - 7 Dní", key: "price_4_7_days" },
                 { label: "8 - 14 Dní", key: "price_8_14_days" },
-                { label: "15+ Dní", key: "price_15_22_days" },
+                { label: "15 - 22 Dní", key: "price_15_22_days" },
+                { label: "23+ Dní", key: "price_23_plus_days" },
               ].map((p) => (
                 <div key={p.key} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{p.label}</span>
@@ -191,6 +248,21 @@ export default function NewCarPage() {
                   </div>
                 </div>
               ))}
+
+              {/* CENA ZA NADLIMIT KM */}
+              <div className="flex items-center justify-between p-4 bg-sky-500/5 rounded-2xl border border-sky-500/20">
+                <span className="text-[10px] font-black text-sky-400 uppercase tracking-tighter">Nadlimit km (1 km)</span>
+                <div className="flex items-center gap-2">
+                  <input 
+                      type="number" 
+                      step="0.1"
+                      className="bg-transparent text-right text-sky-400 font-black outline-none w-20 text-lg italic" 
+                      placeholder="0.0"
+                      onChange={e => setPrices({...prices, extra_km_price: Number(e.target.value)})} 
+                  />
+                  <span className="text-xs text-sky-400/50">€</span>
+                </div>
+              </div>
               
               <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
                 <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Depozit (Security)</span>
@@ -210,7 +282,7 @@ export default function NewCarPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-8 rounded-[2.5rem] transition-all flex items-center justify-center gap-3 shadow-2xl shadow-sky-500/20 active:scale-95 disabled:opacity-50 group"
+            className="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-8 rounded-[2.5rem] transition-all flex items-center justify-center gap-3 shadow-2xl shadow-sky-500/20 active:scale-95 disabled:opacity-50 group cursor-pointer"
           >
             {loading ? (
                 <div className="h-6 w-6 border-3 border-slate-950 border-t-transparent rounded-full animate-spin" />

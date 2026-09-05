@@ -12,9 +12,10 @@ export async function POST(req: Request) {
 
   try {
     const data = await req.json();
-    const { reservation, customer, extras, finalPrice, displayDeposit, paymentMethod, isCompany } = data;
+    // 1. Vytiahli sme aj variableSymbol z prichádzajúcich dát
+    const { reservation, customer, extras, finalPrice, displayDeposit, paymentMethod, isCompany, variableSymbol } = data;
 
-    // 1. ZÁPIS DO SUPABASE (Zosynchronizované s novou SQL schémou)
+    // 2. ZÁPIS DO SUPABASE (Zosynchronizované s novou SQL schémou)
     const { error: dbError } = await supabase
       .from("bookings")
       .insert([{
@@ -29,6 +30,7 @@ export async function POST(req: Request) {
         total_price: finalPrice,
         deposit_amount: displayDeposit,
         payment_method: paymentMethod,
+        variable_symbol: variableSymbol, // <--- PRIDANÉ: Uloženie VS do databázy
         
         // Adresa a osobné údaje
         street: customer?.street,
@@ -72,6 +74,7 @@ ${companyLabel}
 
 --------------------------------
 💳 *Platba:* ${paymentMethod?.toUpperCase()}
+🔢 *VS:* ${variableSymbol || 'N/A'}
 💵 *Suma:* ${finalPrice} €
 --------------------------------
 _Všetky doklady a detaily nájdeš v Admin Paneli._

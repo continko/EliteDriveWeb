@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Save, Euro, Shield, Globe, Hammer, ListPlus } from "lucide-react";
+import { ArrowLeft, Save, Euro, Shield, Globe, Hammer, ListPlus, Gauge, Power } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
@@ -18,13 +18,14 @@ export default function EditCarEquipmentAndPricing() {
   const [saving, setSaving] = useState(false);
   const [selectedMarket, setSelectedMarket] = useState("SK");
 
-  // Stav pre výbavu auta z tabuľky 'cars'
+  // Stav pre výbavu auta a is_active z tabuľky 'cars'
   const [equipmentInput, setEquipmentInput] = useState("");
+  const [isActive, setIsActive] = useState(true);
 
   // Všetky cenové riadky z DB pre toto auto
   const [allPriceRows, setAllPriceRows] = useState<any[]>([]);
 
-  // Aktuálne ceny vo formulári pre vybraný trh
+  // Aktuálne ceny vo formulári pre vybraný trh (vrátane extra_km_price)
   const [marketPrices, setMarketPrices] = useState({
     price_1_day: 0,
     price_2_3_days: 0,
@@ -33,6 +34,7 @@ export default function EditCarEquipmentAndPricing() {
     price_15_22_days: 0,
     price_23_plus_days: 0,
     deposit: 1000,
+    extra_km_price: 0,
   });
 
   const fetchCarAndPrices = async () => {
@@ -52,6 +54,7 @@ export default function EditCarEquipmentAndPricing() {
     }
     
     setCar(carData);
+    setIsActive(carData.is_active ?? true);
     
     // Ak má auto pole equipment (pole stringov), spojíme ho čiarkami späť do textu
     if (carData.equipment && Array.isArray(carData.equipment)) {
@@ -86,6 +89,7 @@ export default function EditCarEquipmentAndPricing() {
         price_15_22_days: existingRow.price_15_22_days || 0,
         price_23_plus_days: existingRow.price_23_plus_days || 0,
         deposit: existingRow.deposit || 1000,
+        extra_km_price: existingRow.extra_km_price || 0,
       });
     } else {
       setMarketPrices({
@@ -96,6 +100,7 @@ export default function EditCarEquipmentAndPricing() {
         price_15_22_days: 0,
         price_23_plus_days: 0,
         deposit: 1000,
+        extra_km_price: 0,
       });
     }
   }, [selectedMarket, allPriceRows]);
@@ -105,7 +110,7 @@ export default function EditCarEquipmentAndPricing() {
     setSaving(true);
 
     try {
-      // 1. Spracovanie a uloženie výbavy do tabuľky 'cars'
+      // 1. Spracovanie a uloženie výbavy A STAVU (is_active) do tabuľky 'cars'
       const parsedEquipment = equipmentInput
         .split(",")
         .map(item => item.trim())
@@ -113,7 +118,10 @@ export default function EditCarEquipmentAndPricing() {
 
       const { error: carError } = await supabase
         .from("cars")
-        .update({ equipment: parsedEquipment })
+        .update({ 
+          equipment: parsedEquipment,
+          is_active: isActive // <-- TU SA TO TERAZ SPRÁVNE UKLADAJÚ DO DB
+        })
         .eq("id", id);
 
       if (carError) throw carError;
@@ -142,7 +150,7 @@ export default function EditCarEquipmentAndPricing() {
         if (priceError) throw priceError;
       }
 
-      toast.success("Výbava a cenník úspešne aktualizované!");
+      toast.success("Konfigurácia vozidla úspešne aktualizovaná!");
       await fetchCarAndPrices(); // Refresh dát z DB
     } catch (err: any) {
       console.error(err);
@@ -198,9 +206,36 @@ export default function EditCarEquipmentAndPricing() {
 
       <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* VĽAVO: PRÉMIOVÁ VÝBAVA A CENNÍKY */}
+        {/* VĽAVO: STAV VOZIDLA, VÝBAVA A CENNÍKY */}
         <div className="lg:col-span-8 space-y-8">
           
+          {/* SEKCIA STAVU VOZIDLA (AKTÍVNE / COMING SOON) */}
+          <div className="p-8 rounded-[3rem] border border-white/5 bg-slate-900/20 backdrop-blur-sm flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className={`p-3 rounded-2xl border ${isActive ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
+                <Power size={20} strokeWidth={3} />
+              </div>
+              <div>
+                <h2 className="font-black uppercase tracking-widest text-sm italic">Stav vozidla vo flotile</h2>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">
+                  {isActive ? "Vozidlo je aktívne a zverejnené pre zákazníkov" : "Vozidlo je skryté / označené ako Coming Soon"}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsActive(!isActive)}
+              className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${
+                isActive 
+                  ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20" 
+                  : "bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20"
+              }`}
+            >
+              {isActive ? "● Aktívne" : "⏳ Coming Soon"}
+            </button>
+          </div>
+
           {/* SEKČIA VÝBAVY */}
           <div className="p-10 rounded-[3rem] border border-white/5 bg-slate-900/20 backdrop-blur-sm space-y-6">
             <div className="flex items-center gap-3 text-sky-500 border-b border-white/5 pb-4">
@@ -219,7 +254,7 @@ export default function EditCarEquipmentAndPricing() {
                 className="w-full bg-slate-950 border border-white/10 rounded-[2rem] p-6 text-sm text-white font-medium outline-none focus:border-sky-500 transition-all min-h-[120px] resize-none placeholder:text-slate-800"
               />
               <p className="text-[9px] text-slate-600 uppercase font-bold tracking-tight pl-2">
-                Zadané prvky sa automaticky pretransformujú na štítky v detaile auta pre zákazníkov.
+                Zadané prvky sa automaticky pretransformują na štítky v detaile auta pre zákazníkov.
               </p>
             </div>
           </div>
@@ -262,6 +297,26 @@ export default function EditCarEquipmentAndPricing() {
                 </div>
               ))}
             </div>
+
+            {/* CENA ZA NADLIMIT KM */}
+            <div className="pt-6 border-t border-white/5">
+              <div className="space-y-2 bg-sky-500/5 p-5 rounded-2xl border border-sky-500/20">
+                <label className="text-[10px] font-black text-sky-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                  <Gauge size={12} /> Cena za nadlimit km (1 km) - {selectedMarket}
+                </label>
+                <div className="relative flex items-center">
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={marketPrices.extra_km_price || ""}
+                    onChange={(e) => setMarketPrices({...marketPrices, extra_km_price: Number(e.target.value)})}
+                    placeholder="0.0"
+                    className="w-full bg-slate-900 border border-sky-500/20 rounded-xl px-4 py-3.5 font-black italic text-xl text-sky-400 placeholder-sky-900/50 focus:outline-none focus:border-sky-500 transition-all"
+                  />
+                  <span className="absolute right-4 font-black italic text-sm text-sky-400/50">€ / km</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -294,7 +349,7 @@ export default function EditCarEquipmentAndPricing() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-8 rounded-[2.5rem] transition-all flex items-center justify-center gap-3 shadow-2xl shadow-sky-500/20 active:scale-95 disabled:opacity-50 group"
+            className="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-8 rounded-[2.5rem] transition-all flex items-center justify-center gap-3 shadow-2xl shadow-sky-500/20 active:scale-95 disabled:opacity-50 group cursor-pointer"
           >
             {saving ? (
               <div className="h-6 w-6 border-3 border-slate-950 border-t-transparent rounded-full animate-spin" />
